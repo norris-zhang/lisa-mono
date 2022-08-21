@@ -1,6 +1,9 @@
 package com.guoba.lisa.datamodel;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,14 +12,20 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "user")
-@Data
-public class User {
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
+public class LisaUser {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id")
+    @ToString.Include
     private Long id;
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String username;
     private String password;
+    @ToString.Include
     private String role;
     @ManyToMany(mappedBy = "users")
     private Set<Institution> institutions;

@@ -1,6 +1,6 @@
 package com.guoba.lisa.controllers;
 
-import com.guoba.lisa.datamodel.User;
+import com.guoba.lisa.datamodel.LisaUser;
 import com.guoba.lisa.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +20,7 @@ public class UserController {
 
     @RequestMapping(path = "/user/list", method = GET)
     public String list(Model model) {
-        List<User> users = userService.getAll();
+        List<LisaUser> users = userService.getAll();
         model.addAttribute("users", users);
         return "user/list";
     }

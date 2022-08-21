@@ -17,7 +17,7 @@ public class Institution {
     private String name;
     @ManyToMany
     @JoinTable(name = "user_institution", joinColumns = @JoinColumn(name = "institution_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users;
+    private Set<LisaUser> users;
     @OneToMany(mappedBy = "institution")
     private Set<LisaClass> classes;
 }

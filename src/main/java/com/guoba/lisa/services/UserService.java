@@ -1,6 +1,6 @@
 package com.guoba.lisa.services;
 
-import com.guoba.lisa.datamodel.User;
+import com.guoba.lisa.datamodel.LisaUser;
 import com.guoba.lisa.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAll() {
+    public List<LisaUser> getAll() {
         return userRepository.findAll();
     }
 }

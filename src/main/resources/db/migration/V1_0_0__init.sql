@@ -1,10 +1,10 @@
 create table "user" (
     "id" bigserial primary key,
     "username" varchar(255) unique not null,
-    "password" char(128) not null,
+    "password" varchar(255) not null,
     "role" varchar(255)
 );
-insert into "user" ("username", "password", "role") values ('lisa', 'password', 'TEACHER');
+insert into "user" ("username", "password", "role") values ('lisa', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', 'TEACHER');
 
 create table "institution" (
     "id" bigserial primary key,

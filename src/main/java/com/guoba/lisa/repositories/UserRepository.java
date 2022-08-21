@@ -1,7 +1,8 @@
 package com.guoba.lisa.repositories;
 
-import com.guoba.lisa.datamodel.User;
+import com.guoba.lisa.datamodel.LisaUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<LisaUser, Long> {
+    LisaUser findByUsername(String username);
 }
