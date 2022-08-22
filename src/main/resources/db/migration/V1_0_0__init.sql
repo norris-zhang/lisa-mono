@@ -87,6 +87,8 @@ create table "roll" (
     "class_id" bigint not null,
     "class_date" date not null,
     "input_date" timestamp with time zone not null default now(),
+    "is_present" char(1) not null,
+    "credit_balance" integer not null,
     constraint fk_student_id foreign key ("student_id") references "student"("id"),
     constraint fk_class_id foreign key ("class_id") references "lisa_class"("id")
 );
