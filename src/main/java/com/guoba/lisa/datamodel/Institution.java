@@ -1,6 +1,6 @@
 package com.guoba.lisa.datamodel;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -9,11 +9,17 @@ import java.util.Set;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Institution {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @ToString.Include
     private Long id;
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String name;
     @ManyToMany
     @JoinTable(name = "user_institution", joinColumns = @JoinColumn(name = "institution_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))

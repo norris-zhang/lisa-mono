@@ -1,12 +1,21 @@
 package com.guoba.lisa.dtos;
 
+import com.guoba.lisa.datamodel.LisaClass;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.TreeMap;
+import java.util.List;
 
 @Data
 public class RollVo {
-    private String name;
-    private TreeMap<LocalDate, Pair<Boolean, Integer>> rollMap;
+    private List<LisaClass> classList;
+    private LisaClass selectedClass;
+    private List<LocalDate> dates;
+    private List<RollVoItem> items;
+
+    @Data
+    public static class RollVoItem {
+        private String name;
+        private List<Pair<Boolean, Integer>> rollList;
+    }
 }
