@@ -21,8 +21,7 @@ public class Institution {
     @EqualsAndHashCode.Include
     @ToString.Include
     private String name;
-    @ManyToMany
-    @JoinTable(name = "user_institution", joinColumns = @JoinColumn(name = "institution_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @OneToMany(mappedBy = "institution")
     private Set<LisaUser> users;
     @OneToMany(mappedBy = "institution")
     private Set<LisaClass> classes;

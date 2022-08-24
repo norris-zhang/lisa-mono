@@ -1,23 +1,19 @@
-create table "user" (
-    "id" bigserial primary key,
-    "username" varchar(255) unique not null,
-    "password" varchar(255) not null,
-    "role" varchar(255)
-);
-insert into "user" ("username", "password", "role") values ('lisa', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', 'TEACHER');
-
 create table "institution" (
     "id" bigserial primary key,
     "name" varchar(255) unique not null
 );
 
-create table "user_institution" (
+create table "user" (
     "id" bigserial primary key,
-    "user_id" bigint not null,
+    "username" varchar(255) unique not null,
+    "password" varchar(255) not null,
     "institution_id" bigint not null,
-    constraint fk_user_id foreign key ("user_id") references "user"("id"),
+    "role" varchar(255),
     constraint fk_institution_id foreign key ("institution_id") references "institution"("id")
 );
+
+insert into "institution" ("name") values ('LisaArt');
+insert into "user" ("username", "password", "institution_id", "role") values ('lisa', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'TEACHER');
 
 create table "lisa_class" (
     "id" bigserial primary key,

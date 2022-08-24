@@ -27,6 +27,7 @@ public class LisaUser {
     private String password;
     @ToString.Include
     private String role;
-    @ManyToMany(mappedBy = "users")
-    private Set<Institution> institutions;
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
 }

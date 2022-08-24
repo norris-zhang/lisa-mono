@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
@@ -51,15 +50,21 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        LisaUser user = userRepository.findByUsername(username);
-        if (user == null) {
+        LisaUser lisaUser = userRepository.findByUsername(username);
+        if (lisaUser == null) {
             throw new UsernameNotFoundException("Unknown username: " + username);
         }
 
-        return User.builder()
+        UserDetails user = User.builder()
                 .username(username)
-                .password(user.getPassword())
-                .roles(user.getRole())
+                .password(lisaUser.getPassword())
+                .roles(lisaUser.getRole())
                 .build();
+        AuthUser authUser = new AuthUser(username, lisaUser.getPassword(), user.getAuthorities());
+        authUser.setUserId(lisaUser.getId());
+        authUser.setInstitutionId(lisaUser.getInstitution().getId());
+        authUser.setInstitutionName(lisaUser.getInstitution().getName());
+
+        return authUser;
     }
 }

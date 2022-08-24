@@ -24,6 +24,8 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .formLogin(withDefaults())
+                .rememberMe().key("cynzrm")
+                .and()
                 .httpBasic(withDefaults()).authenticationProvider(authProvider);
         return http.build();
     }
