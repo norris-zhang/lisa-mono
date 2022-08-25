@@ -50,7 +50,9 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        LisaUser lisaUser = userRepository.findByUsername(username);
+        String[] usernameInstitution = username.split("@");
+        LisaUser lisaUser = userRepository.findByUsernameAndInstitutionId(
+                usernameInstitution[0], /*Long.valueOf(usernameInstitution[1])*/ 1L);
         if (lisaUser == null) {
             throw new UsernameNotFoundException("Unknown username: " + username);
         }
