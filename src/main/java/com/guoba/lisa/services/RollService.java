@@ -1,19 +1,20 @@
 package com.guoba.lisa.services;
 
 import com.guoba.lisa.datamodel.LisaClass;
-import com.guoba.lisa.dtos.Pair;
+import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.dtos.RollVo;
+import com.guoba.lisa.dtos.RollVo.RollVoItem;
 import com.guoba.lisa.repositories.LisaClassRepository;
 import com.guoba.lisa.repositories.RollRepository;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.TreeMap;
 
-import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 public class RollService {
@@ -25,13 +26,27 @@ public class RollService {
         this.classRepository = classRepository;
     }
 
-    public RollVo getRollForClass(Long classId) {
-        List<LisaClass> allClasses = classRepository.findAll();
-        LisaClass currentClass = resolveCurrentClass(allClasses);
+    public RollVo getRollForClass(Long classId, Long institutionId) {
+        List<LisaClass> allClasses = classRepository.findByInstitutionId(institutionId);
+        LisaClass currentClass = classId == null
+                ? resolveCurrentClass(allClasses)
+                : allClasses.stream()
+                    .filter(c -> classId.equals(c.getId()))
+                    .findAny()
+                    .orElseThrow();
 
         RollVo vo = new RollVo();
         vo.setClassList(allClasses);
         vo.setSelectedClass(currentClass);
+
+        List<Roll> rolls = rollRepository.findByClazzId(Sort.by(DESC, "classDate"));
+        rolls.forEach(r -> {
+            RollVoItem item = new RollVoItem();
+            item.setName(r.getStudent().getFirstName() + (isNotBlank(r.getStudent().getLastName())
+                    ? (" " + r.getStudent().getLastName())
+                    : ""));
+
+        });
 
 
         return vo;

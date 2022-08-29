@@ -5,11 +5,12 @@ create table "institution" (
 
 create table "user" (
     "id" bigserial primary key,
-    "username" varchar(255) unique not null,
+    "username" varchar(255) not null,
     "password" varchar(255) not null,
     "institution_id" bigint not null,
     "role" varchar(255),
-    constraint fk_institution_id foreign key ("institution_id") references "institution"("id")
+    constraint fk_institution_id foreign key ("institution_id") references "institution"("id"),
+    constraint unique_username_institution_id unique ("username", "institution_id")
 );
 
 insert into "institution" ("name") values ('LisaArt');
@@ -24,6 +25,10 @@ create table "lisa_class" (
     "end_time" time not null,
     constraint fk_institution_id foreign key ("institution_id") references "institution"("id")
 );
+
+insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六1.30-2.30', 'SATURDAY', '13:30', '14:30');
+insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六3.00-4.00', 'SATURDAY', '15:00', '16:00');
+insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周二3.30-4.30', 'TUESDAY', '15:30', '16:30');
 
 create table "student" (
     "id" bigserial primary key,

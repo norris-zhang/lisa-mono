@@ -52,7 +52,7 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String[] usernameInstitution = username.split("@");
         LisaUser lisaUser = userRepository.findByUsernameAndInstitutionId(
-                usernameInstitution[0], /*Long.valueOf(usernameInstitution[1])*/ 1L);
+                usernameInstitution[0], Long.valueOf(usernameInstitution[1]));
         if (lisaUser == null) {
             throw new UsernameNotFoundException("Unknown username: " + username);
         }

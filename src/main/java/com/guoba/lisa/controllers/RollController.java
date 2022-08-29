@@ -1,6 +1,8 @@
 package com.guoba.lisa.controllers;
 
+import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.services.RollService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,10 +19,12 @@ public class RollController {
         this.rollService = rollService;
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @RequestMapping(path = "/roll", method = GET)
-    public String listClasses(@RequestParam(name = "classId", required = false) Long classId) {
+    public String listClasses(@RequestParam(name = "classId", required = false) Long classId, Authentication auth) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        rollService.getRollForClass(classId);
+        rollService.getRollForClass(classId, authUser.getInstitutionId());
         return "roll/index";
     }
 }
