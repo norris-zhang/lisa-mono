@@ -2,6 +2,8 @@ package com.guoba.lisa.services;
 
 import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
+import com.guoba.lisa.datamodel.Student;
+import com.guoba.lisa.dtos.Pair;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.dtos.RollVo.RollVoItem;
 import com.guoba.lisa.repositories.LisaClassRepository;
@@ -10,9 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.time.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -38,16 +45,43 @@ public class RollService {
         RollVo vo = new RollVo();
         vo.setClassList(allClasses);
         vo.setSelectedClass(currentClass);
+        if (currentClass == null) {
+            return vo;
+        }
 
-        List<Roll> rolls = rollRepository.findByClazzId(Sort.by(DESC, "classDate"));
-        rolls.forEach(r -> {
-            RollVoItem item = new RollVoItem();
-            item.setName(r.getStudent().getFirstName() + (isNotBlank(r.getStudent().getLastName())
-                    ? (" " + r.getStudent().getLastName())
-                    : ""));
+        String weekday = currentClass.getWeekday();
+        LocalDate immediateDate = LocalDate.now();
+        String name = immediateDate.getDayOfWeek().name();
+        while (!name.equals(weekday)) {
+            immediateDate = immediateDate.minusDays(1L);
+        }
+        LocalDate start = immediateDate.minusWeeks(2L);
 
-        });
+        List<Roll> rolls = rollRepository.findByClazzIdAndClassDateGreaterThanEqual(currentClass.getId(), start, Sort.by(DESC, "classDate"));
+        Map<String, Roll> map = new HashMap<>();
+        rolls.forEach(r -> map.put(r.getStudent().getId() + ":" + r.getClassDate(), r));
 
+        vo.setItems(new ArrayList<>());
+        vo.setDates(new ArrayList<>());
+        for (int i = 0; i < 10; i++) {
+            vo.getDates().add(start.plusWeeks(i));
+        }
+        for (Student stu : currentClass.getStudents()) {
+            RollVoItem voItem = new RollVoItem();
+            voItem.setName(stu.getFirstName() + (isBlank(stu.getLastName()) ? "" : " " + stu.getLastName()));
+
+            List<Pair<Boolean, Integer>> list = new ArrayList<>();
+            for (LocalDate classDate : vo.getDates()) {
+                Roll roll = map.get(stu.getId() + ":" + classDate);
+                if (roll == null) {
+                    list.add(null);
+                } else {
+                    list.add(new Pair<>("Y".equals(roll.getIsPresent()), roll.getCreditBalance()));
+                }
+            }
+            voItem.setRollList(list);
+            vo.getItems().add(voItem);
+        }
 
         return vo;
     }
@@ -63,6 +97,6 @@ public class RollService {
                 .findFirst()
                 .orElse(allClasses.stream()
                         .findFirst()
-                        .orElseThrow());
+                        .orElse(null));
     }
 }

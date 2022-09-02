@@ -52,12 +52,16 @@
         <div>
             <form action="#" method="post">
                 <select name="clazz" id="clazz" class="form-select">
-                    <option value="1">周六下午1.30</option>
-                    <option value="1">周六下午3.00</option>
+                    <th:block th:each="c : ${rollVo.classList}">
+                        <option value="c.id" th:text="${c.getName()}"></option>
+                    </th:block>
+                    <option value="1" th:remove="all">周六下午1.30</option>
+                    <option value="1" th:remove="all">周六下午3.00</option>
                 </select>
             </form>
         </div>
         <div>
+            <div th:text="${rollVo}"></div>
             <table class="table">
                 <thead>
                 <tr>
@@ -75,9 +79,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Dongchen</td>
-                    <td>&#10004; 8</td>
+                <tr th:each="stu : ${rollVo.getItems()}">
+                    <td th:text="${stu.getName()}">Dongchen</td>
+                    <td th:each="roll : ${stu.getRollList()}" th:text="${roll?.getFirst()}">&#10004; 8</td>
                     <td>&#10006; 8</td>
                     <td>&#10004; 7</td>
                     <td>

@@ -38,6 +38,9 @@ create table "student" (
     "credits" integer not null
 );
 
+insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongchen', 'Zhang', '2014-03-28', '10');
+insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongyu', 'Zhang', '2014-03-28', '10');
+
 create table "student_class" (
     "id" bigserial primary key,
     "class_id" bigint not null,
@@ -45,6 +48,9 @@ create table "student_class" (
     constraint fk_class_id foreign key ("class_id") references "lisa_class"("id"),
     constraint fk_student_id foreign key ("student_id") references "student"("id")
 );
+
+insert into "student_class" ("class_id", "student_id") values (1, 1);
+insert into "student_class" ("class_id", "student_id") values (1, 2);
 
 create table "parent" (
     "id" bigserial primary key,
