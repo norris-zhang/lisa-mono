@@ -6,6 +6,7 @@ import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.Pair;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.dtos.RollVo.RollVoItem;
+import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.repositories.LisaClassRepository;
 import com.guoba.lisa.repositories.RollRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -51,13 +52,13 @@ public class RollService {
 
         String weekday = currentClass.getWeekday();
         LocalDate immediateDate = LocalDate.now();
-        String name = immediateDate.getDayOfWeek().name();
-        while (!name.equals(weekday)) {
+        while (!immediateDate.getDayOfWeek().name().equals(weekday)) {
             immediateDate = immediateDate.minusDays(1L);
         }
-        LocalDate start = immediateDate.minusWeeks(2L);
+        LocalDate start = immediateDate.minusWeeks(5L);
 
-        List<Roll> rolls = rollRepository.findByClazzIdAndClassDateGreaterThanEqual(currentClass.getId(), start, Sort.by(DESC, "classDate"));
+        List<Roll> rolls = rollRepository.findByClazzIdAndClassDateGreaterThanEqual(
+                currentClass.getId(), start, Sort.by(DESC, "classDate"));
         Map<String, Roll> map = new HashMap<>();
         rolls.forEach(r -> map.put(r.getStudent().getId() + ":" + r.getClassDate(), r));
 
@@ -68,6 +69,7 @@ public class RollService {
         }
         for (Student stu : currentClass.getStudents()) {
             RollVoItem voItem = new RollVoItem();
+            voItem.setStudentId(stu.getId());
             voItem.setName(stu.getFirstName() + (isBlank(stu.getLastName()) ? "" : " " + stu.getLastName()));
 
             List<Pair<Boolean, Integer>> list = new ArrayList<>();
@@ -98,5 +100,9 @@ public class RollService {
                 .orElse(allClasses.stream()
                         .findFirst()
                         .orElse(null));
+    }
+
+    public void rollCall(Long institutionId, Long stuId, LocalDate rollDate, boolean equals) throws RollException {
+        throw new RollException("Not Implemented.");
     }
 }

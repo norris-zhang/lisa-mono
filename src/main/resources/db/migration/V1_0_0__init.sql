@@ -38,8 +38,8 @@ create table "student" (
     "credits" integer not null
 );
 
-insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongchen', 'Zhang', '2014-03-28', '10');
-insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongyu', 'Zhang', '2014-03-28', '10');
+insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongchen', 'Zhang', '2014-03-28', 4);
+insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongyu', 'Zhang', '2014-03-28', 4);
 
 create table "student_class" (
     "id" bigserial primary key,
@@ -99,6 +99,54 @@ create table "roll" (
     constraint fk_student_id foreign key ("student_id") references "student"("id"),
     constraint fk_class_id foreign key ("class_id") references "lisa_class"("id")
 );
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(1, 1, '2022-07-30', now(), 'Y', 8);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(1, 1, '2022-08-06', now(), 'Y', 7);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(1, 1, '2022-08-13', now(), 'N', 7);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(1, 1, '2022-08-20', now(), 'Y', 6);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(1, 1, '2022-08-27', now(), 'Y', 5);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(1, 1, '2022-09-03', now(), 'Y', 4);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(2, 1, '2022-07-30', now(), 'Y', 8);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(2, 1, '2022-08-06', now(), 'Y', 7);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(2, 1, '2022-08-13', now(), 'N', 7);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(2, 1, '2022-08-20', now(), 'Y', 6);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(2, 1, '2022-08-27', now(), 'Y', 5);
+
+INSERT INTO public.roll
+(student_id, class_id, class_date, input_date, is_present, credit_balance)
+VALUES(2, 1, '2022-09-03', now(), 'Y', 4);
 
 create table "renew" (
     "id" bigserial primary key,

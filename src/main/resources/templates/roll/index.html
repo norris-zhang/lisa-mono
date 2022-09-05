@@ -50,10 +50,10 @@
     </nav>
     <section class="container-md">
         <div>
-            <form action="#" method="post">
-                <select name="clazz" id="clazz" class="form-select">
+            <form action="#" th:action="@{/roll}" method="post">
+                <select name="classId" id="clazz" class="form-select" onchange="document.forms[0].submit()">
                     <th:block th:each="c : ${rollVo.classList}">
-                        <option value="c.id" th:text="${c.getName()}"></option>
+                        <option th:value="${c.id}" th:text="${c.getName()}" th:selected="${c.id==rollVo.selectedClass.id}"></option>
                     </th:block>
                     <option value="1" th:remove="all">周六下午1.30</option>
                     <option value="1" th:remove="all">周六下午3.00</option>
@@ -61,66 +61,77 @@
             </form>
         </div>
         <div>
-            <div th:text="${rollVo}"></div>
             <table class="table">
                 <thead>
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">27 Aug</th>
-                    <th scope="col">3 Sep</th>
-                    <th scope="col">10 Sep</th>
-                    <th scope="col">17 Sep</th>
-                    <th scope="col">24 Sep</th>
-                    <th scope="col">1 Oct</th>
-                    <th scope="col">8 Oct</th>
-                    <th scope="col">15 Oct</th>
-                    <th scope="col">22 Oct</th>
-                    <th scope="col">29 Oct</th>
+                    <th scope="col" th:each="date : ${rollVo.getDates()}" th:text="${#temporals.format(date, 'dd MMM')}">27 Aug</th>
+                    <th scope="col" th:remove="all">3 Sep</th>
+                    <th scope="col" th:remove="all">10 Sep</th>
+                    <th scope="col" th:remove="all">17 Sep</th>
+                    <th scope="col" th:remove="all">24 Sep</th>
+                    <th scope="col" th:remove="all">1 Oct</th>
+                    <th scope="col" th:remove="all">8 Oct</th>
+                    <th scope="col" th:remove="all">15 Oct</th>
+                    <th scope="col" th:remove="all">22 Oct</th>
+                    <th scope="col" th:remove="all">29 Oct</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="stu : ${rollVo.getItems()}">
                     <td th:text="${stu.getName()}">Dongchen</td>
-                    <td th:each="roll : ${stu.getRollList()}" th:text="${roll?.getFirst()}">&#10004; 8</td>
-                    <td>&#10006; 8</td>
-                    <td>&#10004; 7</td>
-                    <td>
+                    <td th:each="roll : ${stu.getRollList()}">
+                        <th:block th:if="${roll == null}">
+                            <button type="button" class="btn btn-link" th:attr="data-stu-id=${stu.studentId},data-roll-date=${rollVo.dates[rollStat.index]}" onclick="return markPresent(this)">Present</button>
+                            <br>
+                            <button type="button" class="btn btn-link" th:attr="data-stu_id=${stu.studentId},data-roll_date=${rollVo.dates[rollStat.index]}">Absent</button>
+                        </th:block>
+                        <th:block th:if="${roll?.getFirst()}">
+                            &#9989; <span th:text="${roll?.second}">8</span>
+                        </th:block>
+                        <th:block th:if="${roll != null and (not roll?.getFirst())}">
+                            &#10060; <span th:text="${roll?.second}">8</span>
+                        </th:block>
+                    </td>
+                    <td th:remove="all">&#10006; 8</td>
+                    <td th:remove="all">&#10004; 7</td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
-                    <td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
-                    <td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
-                    <td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
-                    <td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
-                    <td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
-                    <td>
+                    <td th:remove="all">
                         <button type="button" class="btn btn-link">Present</button>
                         <br>
                         <button type="button" class="btn btn-link">Absent</button>
                     </td>
                 </tr>
-                <tr>
+                <tr th:remove="all">
                     <td>Dongyu</td>
                     <td>&#10004; 8</td>
                     <td>&#10006; 8</td>
@@ -133,7 +144,7 @@
                     <td></td>
                     <td></td>
                 </tr>
-                <tr>
+                <tr th:remove="all">
                     <td>Philix</td>
                     <td>&#10004; 8</td>
                     <td>&#10006; 8</td>
@@ -146,7 +157,7 @@
                     <td></td>
                     <td></td>
                 </tr>
-                <tr>
+                <tr th:remove="all">
                     <td>Cici</td>
                     <td>&#10004; 8</td>
                     <td>&#10006; 8</td>
@@ -166,5 +177,27 @@
 </main>
 <!-- JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<script th:src="@{/js/jquery-3.6.1.min.js}"></script>
+<script th:inline="javascript">
+    function markPresent(linkTarget) {
+        if (!window.confirm('Confirm?')) {
+            return false;
+        }
+        const url = '[(@{/roll/call})]';
+        $.post(
+            url,
+            {
+                stuId: linkTarget.dataset.stuId,
+                rollDate: linkTarget.dataset.rollDate,
+                status: 'PRESENT',
+                v: new Date().getDate()
+            },
+            json => {
+                console.log(json);
+            },
+            'json');
+        return false;
+    }
+</script>
 </body>
 </html>

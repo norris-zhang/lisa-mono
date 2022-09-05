@@ -40,7 +40,8 @@ public class SecurityConfiguration {
                 .and()
                 .rememberMe().rememberMeServices(rmService)
                 .and()
-                .httpBasic(withDefaults()).authenticationProvider(authProvider);
+                .httpBasic(withDefaults()).authenticationProvider(authProvider)
+                .csrf().disable();
         return http.build();
     }
 

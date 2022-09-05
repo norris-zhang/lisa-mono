@@ -15,6 +15,7 @@ public class RollVo {
 
     @Data
     public static class RollVoItem {
+        private Long studentId;
         private String name;
         private List<Pair<Boolean, Integer>> rollList;
     }
