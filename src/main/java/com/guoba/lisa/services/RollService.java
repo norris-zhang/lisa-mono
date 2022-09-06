@@ -9,11 +9,12 @@ import com.guoba.lisa.dtos.RollVo.RollVoItem;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.repositories.LisaClassRepository;
 import com.guoba.lisa.repositories.RollRepository;
-import org.apache.commons.lang3.StringUtils;
+import com.guoba.lisa.repositories.StudentRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,17 +22,21 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
+@Transactional(readOnly = true)
 public class RollService {
     private final RollRepository rollRepository;
     private final LisaClassRepository classRepository;
+    private final StudentRepository studentRepository;
 
-    public RollService(RollRepository rollRepository, LisaClassRepository classRepository) {
+    public RollService(RollRepository rollRepository,
+                       LisaClassRepository classRepository,
+                       StudentRepository studentRepository) {
         this.rollRepository = rollRepository;
         this.classRepository = classRepository;
+        this.studentRepository = studentRepository;
     }
 
     public RollVo getRollForClass(Long classId, Long institutionId) {
@@ -102,7 +107,32 @@ public class RollService {
                         .orElse(null));
     }
 
-    public void rollCall(Long institutionId, Long stuId, LocalDate rollDate, boolean equals) throws RollException {
-        throw new RollException("Not Implemented.");
+    @Transactional(readOnly = false)
+    public Roll rollCall(Long stuId, Long classId, LocalDate rollDate, boolean isPresent) throws RollException {
+        Student student = studentRepository.getReferenceById(stuId);
+
+        List<Roll> lastRoll = rollRepository.findByStudentIdAndClazzId(stuId, classId, PageRequest.of(0, 1, DESC, "classDate"));
+        if (!lastRoll.isEmpty()) {
+            Roll lastRollEntity = lastRoll.stream().findFirst().get();
+            if (lastRollEntity.getClassDate().plusWeeks(1L).equals(rollDate)) {
+                if (lastRollEntity.getCreditBalance() != student.getCredits()) {
+                    throw new RollException("Found discrepancy between student credits and roll credits. Please contact administer.");
+                }
+            } else {
+                throw new RollException("Found gap between current roll date and last roll date.");
+            }
+        }
+
+        Roll roll = new Roll();
+        roll.setStudent(student);
+        roll.setClazz(classRepository.getReferenceById(classId));
+        roll.setClassDate(rollDate);
+        roll.setIsPresent(isPresent ? "Y" : "N");
+        roll.setInputDate(ZonedDateTime.now());
+        roll.setCreditBalance(student.getCredits() - 1);
+        rollRepository.save(roll);
+        student.setCredits(student.getCredits() - 1);
+        studentRepository.save(student);
+        return roll;
     }
 }

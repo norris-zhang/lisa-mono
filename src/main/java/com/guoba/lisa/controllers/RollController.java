@@ -1,6 +1,7 @@
 package com.guoba.lisa.controllers;
 
 import com.guoba.lisa.config.AuthUser;
+import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.RollService;
@@ -42,12 +43,15 @@ public class RollController {
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping(path = "/roll/call", produces = "application/json")
-    public @ResponseBody Map<String, String> rollCall(Long stuId, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate rollDate, String status, Authentication auth) {
-        AuthUser authUser = (AuthUser)auth.getPrincipal();
+    public @ResponseBody Map<String, String> rollCall(Long stuId,
+                                                      Long classId,
+                                                      @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate rollDate,
+                                                      String status) {
         try {
-            rollService.rollCall(authUser.getInstitutionId(), stuId, rollDate, "PRESENT".equals(status));
+            Roll roll = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status));
             Map<String, String> map = new HashMap<>();
             map.put("status", "ok");
+            map.put("credit", roll.getCreditBalance().toString());
             return map;
         } catch (RollException e) {
             Map<String, String> map = new HashMap<>();
