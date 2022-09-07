@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -108,10 +109,15 @@ public class RollService {
     }
 
     @Transactional(readOnly = false)
-    public Roll rollCall(Long stuId, Long classId, LocalDate rollDate, boolean isPresent) throws RollException {
+    public Roll rollCall(Long stuId,
+                         Long classId,
+                         LocalDate rollDate,
+                         boolean isPresent,
+                         Boolean isDeduct) throws RollException {
         Student student = studentRepository.getReferenceById(stuId);
 
-        List<Roll> lastRoll = rollRepository.findByStudentIdAndClazzId(stuId, classId, PageRequest.of(0, 1, DESC, "classDate"));
+        List<Roll> lastRoll = rollRepository.findByStudentIdAndClazzId(stuId, classId,
+                PageRequest.of(0, 1, DESC, "classDate"));
         if (!lastRoll.isEmpty()) {
             Roll lastRollEntity = lastRoll.stream().findFirst().get();
             if (lastRollEntity.getClassDate().plusWeeks(1L).equals(rollDate)) {
@@ -123,15 +129,20 @@ public class RollService {
             }
         }
 
+        Integer newCreditBalance = student.getCredits();
+        if (isPresent || (TRUE.equals(isDeduct))) {
+            newCreditBalance--;
+        }
+
         Roll roll = new Roll();
         roll.setStudent(student);
         roll.setClazz(classRepository.getReferenceById(classId));
         roll.setClassDate(rollDate);
         roll.setIsPresent(isPresent ? "Y" : "N");
         roll.setInputDate(ZonedDateTime.now());
-        roll.setCreditBalance(student.getCredits() - 1);
+        roll.setCreditBalance(newCreditBalance);
         rollRepository.save(roll);
-        student.setCredits(student.getCredits() - 1);
+        student.setCredits(newCreditBalance);
         studentRepository.save(student);
         return roll;
     }

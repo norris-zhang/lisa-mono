@@ -36,6 +36,8 @@ public class SecurityConfiguration {
                         UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 .loginPage("/login")
+                .defaultSuccessUrl("/roll")
+                .failureUrl("/login?error")
                 .permitAll()
                 .and()
                 .rememberMe().rememberMeServices(rmService)

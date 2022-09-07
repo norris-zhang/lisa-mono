@@ -5,6 +5,8 @@ import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.RollService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class RollController {
+    private final Logger logger = LoggerFactory.getLogger(RollController.class);
     private final RollService rollService;
 
     public RollController(RollService rollService) {
@@ -46,17 +49,25 @@ public class RollController {
     public @ResponseBody Map<String, String> rollCall(Long stuId,
                                                       Long classId,
                                                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate rollDate,
-                                                      String status) {
+                                                      String status,
+                                                      @RequestParam(required = false) Boolean isDeduct) {
         try {
-            Roll roll = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status));
+            Roll roll = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status), isDeduct);
             Map<String, String> map = new HashMap<>();
             map.put("status", "ok");
             map.put("credit", roll.getCreditBalance().toString());
+            map.put("isPresent", roll.getIsPresent());
             return map;
         } catch (RollException e) {
             Map<String, String> map = new HashMap<>();
             map.put("status", "error");
             map.put("message", e.getMessage());
+            return map;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            Map<String, String> map = new HashMap<>();
+            map.put("status", "error");
+            map.put("message", "Server Error. Please contact administrator.");
             return map;
         }
     }

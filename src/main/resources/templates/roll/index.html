@@ -84,7 +84,7 @@
                         <th:block th:if="${roll == null}">
                             <button type="button" class="btn btn-link" th:attr="data-stu-id=${stu.studentId},data-roll-date=${rollVo.dates[rollStat.index]},data-class-id=${rollVo.selectedClass.id}" onclick="return markPresent(this)">Present</button>
                             <br>
-                            <button type="button" class="btn btn-link" th:attr="data-stu_id=${stu.studentId},data-roll_date=${rollVo.dates[rollStat.index]},data-class-id=${rollVo.selectedClass.id}" onclick="return markAbsent(this)">Absent</button>
+                            <button type="button" class="btn btn-link" th:attr="data-stu-id=${stu.studentId},data-roll-date=${rollVo.dates[rollStat.index]},data-class-id=${rollVo.selectedClass.id}" onclick="return markAbsent(this)">Absent</button>
                         </th:block>
                         <th:block th:if="${roll?.getFirst()}">
                             &#9989; <span th:text="${roll?.second}">8</span>
@@ -181,7 +181,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-btn-name="x"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Keep the current credits without deduction?
@@ -197,9 +197,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 <script th:src="@{/js/jquery-3.6.1.min.js}"></script>
 <script th:inline="javascript">
-    $(document).ready(function () {
-
-    });
     function markPresent(linkTarget) {
         if (!window.confirm('Confirm?')) {
             return false;
@@ -227,33 +224,36 @@
     }
 
     function markAbsent(linkTarget) {
+        alert(linkTarget.dataset.stuId);
         $('#confirmBox').one('hide.bs.modal', function (e) {
-            console.log($(document.activeElement).data('btnName'));
+            alert(linkTarget.dataset.stuId);
+            if (!$(document.activeElement).data('btnName')) {
+                return;
+            }
+            const url = '[(@{/roll/call})]';
+            $.post(
+                url,
+                {
+                    stuId: linkTarget.dataset.stuId,
+                    classId: linkTarget.dataset.classId,
+                    rollDate: linkTarget.dataset.rollDate,
+                    status: 'ABSENT',
+                    isDeduct: $(document.activeElement).data('btnName') === 'deduct',
+                    v: new Date().getDate()
+                },
+                json => {
+                    console.log(json);
+                    if (json.status === 'ok') {
+                        const icon = json.isPresent === 'Y' ? '&#9989;' : '&#10060;'
+                        $(linkTarget).parent().html(icon + ' <span>'+json.credit+'</span>')
+                    } else {
+                        alert(json.message);
+                    }
+                },
+                'json');
         });
         $('#confirmBox').modal('show');
-        return false;
-        if (!window.confirm('Confirm?')) {
-            return false;
-        }
-        const url = '[(@{/roll/call})]';
-        $.post(
-            url,
-            {
-                stuId: linkTarget.dataset.stuId,
-                classId: linkTarget.dataset.classId,
-                rollDate: linkTarget.dataset.rollDate,
-                status: 'PRESENT',
-                v: new Date().getDate()
-            },
-            json => {
-                console.log(json);
-                if (json.status === 'ok') {
-                    $(linkTarget).parent().html('&#9989; <span>'+json.credit+'</span>')
-                } else {
-                    alert(json.message);
-                }
-            },
-            'json');
+
         return false;
     }
 </script>
