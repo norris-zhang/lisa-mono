@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 import java.util.List;
@@ -31,8 +32,8 @@ public class UserController {
         return "user/list";
     }
 
-    @GetMapping("/login")
-    public String login(HttpSession session) {
+    @RequestMapping("/login")
+    public String login(HttpSession session, HttpServletRequest request, Authentication auth) {
         Enumeration<String> attributeNames = session.getAttributeNames();
         while (attributeNames.hasMoreElements()) {
             String name = attributeNames.nextElement();

@@ -96,9 +96,12 @@
 </head>
 <body class="text-center">
 <main class="form-signin w-100 m-auto">
-    <div th:if="${param.error}">error</div>
     <form th:action="@{/login}" method="post">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+        <div th:if="${param.error}">
+            Invalid username and password.</div>
+        <div th:if="${param.logout}">
+            You have been logged out.</div>
         <div class="form-floating">
             <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp">
             <label for="username">Username</label>
@@ -119,7 +122,6 @@
         </div>
         <input name="_csrf" type="hidden" value="52f43249-a009-473d-ab9f-67984449a9a3">
         <button type="submit" class="w-100 btn btn-lg btn-primary">Sign in</button>
-        <div th:text="${session.user}"></div>
     </form>
 </main>
 

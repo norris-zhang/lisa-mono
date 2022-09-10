@@ -34,15 +34,18 @@ public class SecurityConfiguration {
                 .addFilterBefore(
                         new InstitutionalUsernamePasswordAuthenticationFilter(new ProviderManager(authProvider), rmService),
                         UsernamePasswordAuthenticationFilter.class)
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/roll")
-                .failureUrl("/login?error")
-                .permitAll()
-                .and()
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/roll")
+                        .permitAll())
+//                .loginPage("/login")
+//                .defaultSuccessUrl("/roll")
+//                .failureUrl("/login?error=true")
+//                .permitAll()
+//                .and()
                 .rememberMe().rememberMeServices(rmService)
                 .and()
-                .httpBasic(withDefaults()).authenticationProvider(authProvider)
+//                .httpBasic(withDefaults()).authenticationProvider(authProvider)
                 .csrf().disable();
         return http.build();
     }
