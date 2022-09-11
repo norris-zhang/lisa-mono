@@ -98,9 +98,9 @@
 <main class="form-signin w-100 m-auto">
     <form th:action="@{/login}" method="post">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-        <div th:if="${param.error}">
+        <div th:if="${param.error}" style="color: red;">
             Invalid username and password.</div>
-        <div th:if="${param.logout}">
+        <div th:if="${param.logout}" style="color: red;">
             You have been logged out.</div>
         <div class="form-floating">
             <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp">

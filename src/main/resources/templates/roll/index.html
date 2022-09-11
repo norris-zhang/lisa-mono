@@ -224,9 +224,7 @@
     }
 
     function markAbsent(linkTarget) {
-        alert(linkTarget.dataset.stuId);
         $('#confirmBox').one('hide.bs.modal', function (e) {
-            alert(linkTarget.dataset.stuId);
             if (!$(document.activeElement).data('btnName')) {
                 return;
             }

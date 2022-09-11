@@ -6,41 +6,35 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.Assert;
 
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-public class InstitutionalUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    public InstitutionalUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager,
-                                                             RememberMeServices rememberMeServices) {
-        super(authenticationManager);
-        setRememberMeServices(rememberMeServices);
-    }
+import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
 
+public class InstitutionalUsernamePasswordAuthenticationFilter implements Filter {
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        if (!request.getMethod().equals("POST")) {
-            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
-        }
-        String username = obtainUsername(request);
-        username = (username != null) ? username.trim() : "";
-        String password = obtainPassword(request);
-        password = (password != null) ? password : "";
-        String institution = obtainInstitution(request);
-        institution = (institution != null) ? institution : "";
-        UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(
-                username + "@" + institution, password);
-        // Allow subclasses to set the "details" property
-        setDetails(request, authRequest);
-        return this.getAuthenticationManager().authenticate(authRequest);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        chain.doFilter(new MockRequest(request), response);
     }
-
-    @Nullable
-    private String obtainInstitution(HttpServletRequest request) {
-        return request.getParameter("institutionId");
+    static class MockRequest extends HttpServletRequestWrapper {
+        public MockRequest(ServletRequest request) {
+            super((HttpServletRequest) request);
+        }
+        public String getParameter(String paramName) {
+            String value = super.getParameter(paramName);
+            if (SPRING_SECURITY_FORM_USERNAME_KEY.equals(paramName)) {
+                return value + "@" + super.getParameter("institutionId");
+            } else {
+                return value;
+            }
+        }
     }
 }

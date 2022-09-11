@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -23,29 +21,19 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            @Autowired AuthenticationProvider authProvider,
                                            @Autowired UserDetailsService userDetailsService) throws Exception {
-        TokenBasedRememberMeServices rmService = new TokenBasedRememberMeServices("cynzrm", userDetailsService);
+//        TokenBasedRememberMeServices rmService = new TokenBasedRememberMeServices("cynzrm", userDetailsService);
         http
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-//                .authorizeHttpRequests((authz) -> authz
-//                        .anyRequest().authenticated()
-//                )
-                .addFilterBefore(
-                        new InstitutionalUsernamePasswordAuthenticationFilter(new ProviderManager(authProvider), rmService),
-                        UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/roll")
                         .permitAll())
-//                .loginPage("/login")
-//                .defaultSuccessUrl("/roll")
-//                .failureUrl("/login?error=true")
-//                .permitAll()
-//                .and()
-                .rememberMe().rememberMeServices(rmService)
-                .and()
-//                .httpBasic(withDefaults()).authenticationProvider(authProvider)
+                .addFilterBefore(
+                        new InstitutionalUsernamePasswordAuthenticationFilter(),
+                        UsernamePasswordAuthenticationFilter.class)
+                .rememberMe(withDefaults())//.rememberMeServices(rmService)
                 .csrf().disable();
         return http.build();
     }
