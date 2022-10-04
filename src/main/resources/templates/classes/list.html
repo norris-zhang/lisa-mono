@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Classes</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('classes')"></nav>
+
+    <section class="container-md">
+        <div>
+            <form action="#" th:action="@{/roll}" method="post">
+
+            </form>
+        </div>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Weekday</th>
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>周六下午1.30</td>
+                    <td>Saturday</td>
+                    <td>1.30pm</td>
+                    <td>2.30pm</td>
+                </tr>
+                <tr>
+                    <td>周六下午1.30</td>
+                    <td>Saturday</td>
+                    <td>1.30pm</td>
+                    <td>2.30pm</td>
+                </tr>
+                <tr>
+                    <td>周六下午1.30</td>
+                    <td>Saturday</td>
+                    <td>1.30pm</td>
+                    <td>2.30pm</td>
+                </tr>
+                <tr>
+                    <td>周六下午1.30</td>
+                    <td>Saturday</td>
+                    <td>1.30pm</td>
+                    <td>2.30pm</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+</body>
+</html>
