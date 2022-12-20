@@ -10,19 +10,25 @@ import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.repositories.LisaClassRepository;
 import com.guoba.lisa.repositories.RollRepository;
 import com.guoba.lisa.repositories.StudentRepository;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
@@ -115,35 +121,62 @@ public class RollService {
                          boolean isPresent,
                          Boolean isDeduct) throws RollException {
         Student student = studentRepository.getReferenceById(stuId);
+        Optional<Roll> previousRoll = rollRepository.findFirstByStudentIdAndClazzIdAndClassDateLessThanOrderByClassDateDesc(stuId, classId, rollDate);
 
-        List<Roll> lastRoll = rollRepository.findByStudentIdAndClazzId(stuId, classId,
-                PageRequest.of(0, 1, DESC, "classDate"));
-        if (!lastRoll.isEmpty()) {
-            Roll lastRollEntity = lastRoll.stream().findFirst().get();
-            if (lastRollEntity.getClassDate().plusWeeks(1L).equals(rollDate)) {
-                if (lastRollEntity.getCreditBalance() != student.getCredits()) {
-                    throw new RollException("Found discrepancy between student credits and roll credits. Please contact administer.");
-                }
-            } else {
-                throw new RollException("Found gap between current roll date and last roll date.");
-            }
+        // The new roll item's credit is determined by its previous roll item, or student's credit if no previous roll.
+        Integer rollCreditBal = 0;
+        if (previousRoll.isPresent()) {
+            rollCreditBal = previousRoll.get().getCreditBalance();
+        } else {
+            rollCreditBal = student.getCredits();
         }
 
+        // The final credit that is set to the student at last.
         Integer newCreditBalance = student.getCredits();
         if (isPresent || (TRUE.equals(isDeduct))) {
             newCreditBalance--;
+            rollCreditBal--;
         }
 
+        Roll roll = createRoll(classId, rollDate, isPresent, student, rollCreditBal);
+
+        updateStudentCredits(student, newCreditBalance);
+
+        if (isPresent || (TRUE.equals(isDeduct))) {
+            updateSubsequentRolls(stuId, classId, rollDate, newCreditBalance);
+        }
+        return roll;
+    }
+
+    private void updateStudentCredits(Student student, Integer newCreditBalance) {
+        student.setCredits(newCreditBalance);
+        studentRepository.save(student);
+    }
+
+    private Roll createRoll(Long classId, LocalDate rollDate, boolean isPresent, Student student, Integer rollCreditBal) {
         Roll roll = new Roll();
         roll.setStudent(student);
         roll.setClazz(classRepository.getReferenceById(classId));
         roll.setClassDate(rollDate);
         roll.setIsPresent(isPresent ? "Y" : "N");
         roll.setInputDate(ZonedDateTime.now());
-        roll.setCreditBalance(newCreditBalance);
+        roll.setCreditBalance(rollCreditBal);
         rollRepository.save(roll);
-        student.setCredits(newCreditBalance);
-        studentRepository.save(student);
         return roll;
+    }
+
+    private void updateSubsequentRolls(Long stuId, Long classId, LocalDate rollDate, Integer newCreditBalance) throws RollException {
+        List<Roll> subsequentRolls = rollRepository.findByStudentIdAndClazzIdAndClassDateGreaterThan(stuId, classId, rollDate,
+            Sort.by(ASC, "classDate"));
+        for (Roll r : subsequentRolls) {
+            r.setCreditBalance(r.getCreditBalance() - 1);
+            rollRepository.save(r);
+        }
+        if (!subsequentRolls.isEmpty()) {
+            Roll lastRollEntity = subsequentRolls.get(subsequentRolls.size() - 1);
+            if (lastRollEntity.getCreditBalance() != newCreditBalance) {
+                throw new RollException("Found discrepancy between student credits and roll credits. Please contact administer.");
+            }
+        }
     }
 }
