@@ -1,10 +1,14 @@
 package com.guoba.lisa.controllers;
 
 import com.guoba.lisa.config.AuthUser;
+import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
+import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.exceptions.RollException;
+import com.guoba.lisa.services.ClassService;
 import com.guoba.lisa.services.RollService;
+import com.guoba.lisa.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +25,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -29,9 +36,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class RollController {
     private final Logger logger = LoggerFactory.getLogger(RollController.class);
     private final RollService rollService;
+    private final ClassService classService;
+    private final StudentService studentService;
 
-    public RollController(RollService rollService) {
+    public RollController(RollService rollService, ClassService classService, StudentService studentService) {
         this.rollService = rollService;
+        this.classService = classService;
+        this.studentService = studentService;
     }
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
@@ -70,5 +81,32 @@ public class RollController {
             map.put("message", "Server Error. Please contact administrator.");
             return map;
         }
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping(path = "/roll/catchup")
+    public String rollCatchup(Long classId, Authentication auth, Model model) {
+        model.addAttribute("classId", classId);
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+        List<LisaClass> allClasses = classService.getAllClassesInitStudentsByClassId(authUser.getInstitutionId(), classId);
+        model.addAttribute("allClasses", allClasses);
+        Set<Student> classStudents = allClasses.stream().filter(c -> c.getId().equals(classId)).findAny().get().getStudents();
+        model.addAttribute("classStudents", classStudents);
+        return "roll/catch-up";
+    }
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @PostMapping(path = "/roll/catchup")
+    public String rollCatchupCall(Long stuId,
+                                  Long classId,
+                                  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate rollDate,
+                                  String status,
+                                  @RequestParam(required = false) Boolean isDeduct) {
+
+//        try {
+//            Roll roll = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status), isDeduct);
+//        } catch (RollException e) {
+//            throw new RuntimeException(e);
+//        }
+        return "redirect:/";
     }
 }
