@@ -8,6 +8,7 @@
     <nav th:replace="fragments :: navbar('roll')"></nav>
 
     <section class="container-md">
+        <h1>Roll</h1>
         <div>
             <form action="#" th:action="@{/roll}" method="post">
                 <select name="classId" id="clazz" class="form-select" onchange="document.forms[0].submit()">
@@ -17,6 +18,7 @@
                     <option value="1" th:remove="all">周六下午1.30</option>
                     <option value="1" th:remove="all">周六下午3.00</option>
                 </select>
+                <button type="button" class="btn btn-primary" onclick="gotoCatchup()">Catch Up</button>
             </form>
         </div>
         <div>
@@ -210,6 +212,11 @@
         $('#confirmBox').modal('show');
 
         return false;
+    }
+    function gotoCatchup() {
+      const classId = $("#clazz").val()
+      const url = '[(@{/roll/catchup})]';
+      window.location.href = `${url}?classId=${classId}`;
     }
 </script>
 </body>
