@@ -3,6 +3,7 @@ package com.guoba.lisa.controllers;
 import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.datamodel.Institution;
 import com.guoba.lisa.datamodel.LisaClass;
+import com.guoba.lisa.enums.ClassStatus;
 import com.guoba.lisa.services.ClassService;
 import com.guoba.lisa.web.models.AddClass;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -22,8 +25,12 @@ public class ClassController {
 
     public ClassController(ClassService classService) {this.classService = classService;}
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @RequestMapping(path = "/classes", method = GET)
-    public String list() {
+    public String list(Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+        List<LisaClass> classes = classService.getAllActiveClasses(authUser.getInstitutionId());
+        model.addAttribute("classes", classes);
         return "classes/list";
     }
 

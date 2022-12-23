@@ -8,4 +8,6 @@ import java.util.List;
 public interface LisaClassRepository extends JpaRepository<LisaClass, Long> {
 
     List<LisaClass> findByInstitutionId(Long institutionId);
+
+    List<LisaClass> findByInstitutionIdAndStatus(Long institutionId, Integer status);
 }

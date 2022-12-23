@@ -1,6 +1,7 @@
 package com.guoba.lisa.services;
 
 import com.guoba.lisa.datamodel.LisaClass;
+import com.guoba.lisa.enums.ClassStatus;
 import com.guoba.lisa.repositories.LisaClassRepository;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,9 @@ public class ClassService {
     @Transactional
     public void createClass(LisaClass lisaClass) {
         classRepository.save(lisaClass);
+    }
+
+    public List<LisaClass> getAllActiveClasses(Long institutionId) {
+        return classRepository.findByInstitutionIdAndStatus(institutionId, ClassStatus.ACTIVE.ordinal());
     }
 }

@@ -1,9 +1,18 @@
 package com.guoba.lisa.datamodel;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -31,6 +40,10 @@ public class LisaClass {
     @EqualsAndHashCode.Include
     @ToString.Include
     private LocalTime endTime;
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    @Column(columnDefinition = "integer not null default 0")
+    private Integer status = 0;
     @ManyToOne
     @JoinColumn(name = "institution_id")
     @EqualsAndHashCode.Include

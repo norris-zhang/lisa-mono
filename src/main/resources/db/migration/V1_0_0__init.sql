@@ -23,6 +23,7 @@ create table "lisa_class" (
     "weekday" varchar(20) not null,
     "start_time" time not null,
     "end_time" time not null,
+    "status" integer not null default 0,
     constraint fk_institution_id foreign key ("institution_id") references "institution"("id")
 );
 

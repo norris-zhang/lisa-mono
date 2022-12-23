@@ -14,33 +14,26 @@
         <div>
             <table class="table">
                 <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Weekday</th>
-                    <th scope="col">Start Time</th>
-                    <th scope="col">End Time</th>
-                </tr>
+<!--                <tr>-->
+<!--                    <th scope="col">Name</th>-->
+<!--                    <th scope="col">Weekday</th>-->
+<!--                    <th scope="col">Start Time</th>-->
+<!--                    <th scope="col">End Time</th>-->
+<!--                    <th scope="col"> </th>-->
+<!--                </tr>-->
                 </thead>
                 <tbody>
-                <tr>
-                    <td>周六下午1.30</td>
-                    <td>Saturday</td>
-                    <td>1.30pm</td>
-                    <td>2.30pm</td>
+                <tr th:each="c : ${classes}">
+                    <td th:text="${c.name}">周六下午1.30</td>
+                    <td th:text="${c.weekday}">Saturday</td>
+                    <td th:text="${c.startTime + '-' + c.endTime}">1.30pm</td>
+<!--                    <td th:text="${c.endTime}">2.30pm</td>-->
+                    <td>
+                        <a href="#" class="btn btn-link">Students</a>
+                        <a href="#" class="btn btn-link">Delete</a>
+                    </td>
                 </tr>
-                <tr>
-                    <td>周六下午1.30</td>
-                    <td>Saturday</td>
-                    <td>1.30pm</td>
-                    <td>2.30pm</td>
-                </tr>
-                <tr>
-                    <td>周六下午1.30</td>
-                    <td>Saturday</td>
-                    <td>1.30pm</td>
-                    <td>2.30pm</td>
-                </tr>
-                <tr>
+                <tr th:remove="all">
                     <td>周六下午1.30</td>
                     <td>Saturday</td>
                     <td>1.30pm</td>
