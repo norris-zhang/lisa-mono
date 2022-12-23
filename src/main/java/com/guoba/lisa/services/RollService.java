@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.Boolean.TRUE;
@@ -120,6 +121,14 @@ public class RollService {
                          LocalDate rollDate,
                          boolean isPresent,
                          Boolean isDeduct) throws RollException {
+        LisaClass clazz = classRepository.getReferenceById(classId);
+        String weekday = clazz.getWeekday();
+        DayOfWeek dayOfWeek = rollDate.getDayOfWeek();
+        if (!Objects.equals(weekday, dayOfWeek.toString())) {
+            throw new RollException(String.format("The roll date %s does not align with the class week day %s.",
+                rollDate.toString(), weekday));
+        }
+
         Student student = studentRepository.getReferenceById(stuId);
         Optional<Roll> previousRoll = rollRepository.findFirstByStudentIdAndClazzIdAndClassDateLessThanOrderByClassDateDesc(stuId, classId, rollDate);
 

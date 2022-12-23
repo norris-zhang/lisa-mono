@@ -9,66 +9,79 @@
 
     <section class="container-md">
         <h1>Catch-Up Roll</h1>
-        <form action="#" th:action="@{/roll/catchup}" method="post">
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <form action="#" th:action="@{/roll/catchup}" method="post" class="needs-validation" novalidate>
             <div class="mb-3">
                 <label for="classId" class="form-label">Class</label>
-                <select name="classId" id="classId" class="form-select" onchange="changeClass()">
+                <select name="classId" id="classId" class="form-select" onchange="changeClass()" required>
                     <th:block th:each="c : ${allClasses}">
                         <option th:value="${c.id}" th:text="${c.getName()}" th:selected="${c.id==classId}"></option>
                     </th:block>
                     <option value="1" th:remove="all">Class Name</option>
                 </select>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please choose a class.
+                </div>
             </div>
             <div class="mb-3">
                 <label for="classStudents" class="form-label">Student</label>
-                <select name="stuId" id="classStudents" class="form-select">
-                    <option value="0">Select a Student</option>
+                <select name="stuId" id="classStudents" class="form-select" required>
+                    <option value="">Select a Student</option>
                     <th:block th:each="s : ${classStudents}">
-                        <option th:value="${s.id}" th:text="${s.firstName + ' ' + s.lastName}"></option>
+                        <option th:value="${s.id}" th:text="${s.firstName + ' ' + s.lastName}" th:selected="${s.id==rollCallModel?.stuId}"></option>
                     </th:block>
                     <option value="1" th:remove="all">Class Name</option>
                 </select>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please choose a student.
+                </div>
             </div>
             <div class="mb-3">
                 <label for="rollDate" class="form-label">Roll Date</label>
-                <input type="date" name="rollDate" id="rollDate">
+                <input type="date" name="rollDate" id="rollDate" required th:value="${rollCallModel?.rollDate}">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please choose a date.
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Roll Status: </label>
-                <input type="radio" name="status" id="rollStatusPresent" value="PRESENT">
+                <input type="radio" name="status" id="rollStatusPresent" value="PRESENT" required th:checked="${rollCallModel?.status == 'PRESENT'}">
                 <label for="rollStatusPresent" class="form-label">Present</label>
-                <input type="radio" name="status" id="rollStatusAbsent" value="ABSENT">
+                <input type="radio" name="status" id="rollStatusAbsent" value="ABSENT" th:checked="${rollCallModel?.status=='ABSENT'}">
                 <label for="rollStatusAbsent" class="form-label">Absent</label>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please choose a status.
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Deduct Credit? </label>
-                <input type="radio" name="isDeduct" id="isDeductTrue" value="TRUE">
+                <input type="radio" name="isDeduct" id="isDeductTrue" value="TRUE" required th:checked="${rollCallModel?.isDeduct == true}">
                 <label for="isDeductTrue" class="form-label">Yes</label>
-                <input type="radio" name="isDeduct" id="isDeductFalse" value="FALSE">
+                <input type="radio" name="isDeduct" id="isDeductFalse" value="FALSE" th:checked="${rollCallModel?.isDeduct == false}">
                 <label for="isDeductFalse" class="form-label">No</label>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please choose whether to deduct credit.
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </section>
 </main>
-<!-- Modal -->
-<div class="modal fade" id="confirmBox" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Keep the current credits without deduction?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-btn-name="deduct">Deduct</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-btn-name="keepCredit">Keep Credits</button>
-            </div>
-        </div>
-    </div>
-</div>
 <th:block th:replace="fragments :: common_scripts"></th:block>
 <script th:inline="javascript">
     function changeClass() {
@@ -94,6 +107,23 @@
           }
       );
     }
+
+    (() => {
+      'use strict'
+
+      const forms = document.querySelectorAll('.needs-validation')
+
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
 </script>
 </body>
 </html>

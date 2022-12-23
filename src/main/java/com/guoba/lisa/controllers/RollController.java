@@ -9,6 +9,7 @@ import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.ClassService;
 import com.guoba.lisa.services.RollService;
 import com.guoba.lisa.services.StudentService;
+import com.guoba.lisa.web.models.RollCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,10 +19,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -96,17 +100,17 @@ public class RollController {
     }
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping(path = "/roll/catchup")
-    public String rollCatchupCall(Long stuId,
-                                  Long classId,
-                                  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate rollDate,
-                                  String status,
-                                  @RequestParam(required = false) Boolean isDeduct) {
+    public String rollCatchupCall(@ModelAttribute RollCall rollCall,
+                                  RedirectAttributes redirectModel) {
 
-//        try {
-//            Roll roll = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status), isDeduct);
-//        } catch (RollException e) {
-//            throw new RuntimeException(e);
-//        }
-        return "redirect:/";
+        try {
+            rollService.rollCall(rollCall.getStuId(), rollCall.getClassId(), rollCall.getRollDate(),
+                "PRESENT".equals(rollCall.getStatus()), rollCall.getIsDeduct());
+            return "redirect:/students/history?stuId=" + rollCall.getStuId();
+        } catch (RollException e) {
+            redirectModel.addFlashAttribute("rollCallModel", rollCall);
+            redirectModel.addFlashAttribute("errorMsg", e.getMessage());
+            return "redirect:/roll/catchup?classId=" + rollCall.getClassId();
+        }
     }
 }
