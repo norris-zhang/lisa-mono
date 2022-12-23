@@ -9,7 +9,7 @@ create table "user" (
     "password" varchar(255) not null,
     "institution_id" bigint not null,
     "role" varchar(255),
-    constraint fk_institution_id foreign key ("institution_id") references "institution"("id"),
+    constraint fk_usr_institution_id foreign key ("institution_id") references "institution"("id"),
     constraint unique_username_institution_id unique ("username", "institution_id")
 );
 
@@ -24,7 +24,7 @@ create table "lisa_class" (
     "start_time" time not null,
     "end_time" time not null,
     "status" integer not null default 0,
-    constraint fk_institution_id foreign key ("institution_id") references "institution"("id")
+    constraint fk_cla_institution_id foreign key ("institution_id") references "institution"("id")
 );
 
 insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六1.30-2.30', 'SATURDAY', '13:30', '14:30');
@@ -33,14 +33,16 @@ insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) v
 
 create table "student" (
     "id" bigserial primary key,
+    "institution_id" bigint not null,
     "first_name" varchar(255) not null,
     "last_name" varchar(255) null,
     "date_of_birth" date null,
-    "credits" integer not null
+    "credits" integer not null,
+    constraint fk_stu_institution_id foreign key ("institution_id") references "institution"("id")
 );
 
-insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongchen', 'Zhang', '2014-03-28', 4);
-insert into "student" ("first_name", "last_name", "date_of_birth", "credits") values ('Dongyu', 'Zhang', '2014-03-28', 4);
+insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongchen', 'Zhang', '2014-03-28', 4);
+insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongyu', 'Zhang', '2014-03-28', 4);
 
 create table "student_class" (
     "id" bigserial primary key,

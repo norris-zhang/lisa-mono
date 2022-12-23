@@ -37,6 +37,11 @@ public class Student {
     @ToString.Include
     private Integer credits;
 
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    private Institution institution;
     @JsonIgnore
     @ManyToMany(mappedBy = "students")
     private Set<LisaClass> classes;
