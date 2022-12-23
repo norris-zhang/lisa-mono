@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Classes</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('classes')"></nav>
+
+    <section class="container-md">
+        <h1>Add a Class</h1>
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <form action="#" th:action="@{/classes/add}" method="post" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="className" class="form-label">Class Name</label>
+                <input type="text" class="form-control" id="className" name="name" th:value="${model?.name}" maxlength="255" required placeholder="Example: 周六1.30-2.30">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter a class name.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="classDay" class="form-label">Class Day</label>
+                <select name="classDay" id="classDay" class="form-select" required>
+                    <option value="">Pick a Class Day</option>
+                    <option th:each="dayOpt : ${T(java.time.DayOfWeek).values()}" th:value="${dayOpt}" th:text="${dayOpt}" th:selected="${model?.classDay==dayOpt.name()}"></option>
+                </select>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please pick a day.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="startTime" class="form-label">Class Start Time</label>
+                <input type="time" class="form-control" id="startTime" name="startTime" th:value="${model?.startTime}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the class start time.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="endTime" class="form-label">Class End Time</label>
+                <input type="time" class="form-control" id="endTime" name="endTime" th:value="${model?.endTime}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the class end time.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
+</body>
+</html>

@@ -14,9 +14,7 @@
             <div class="mb-3">
                 <label for="classId" class="form-label">Class</label>
                 <select name="classId" id="classId" class="form-select" onchange="changeClass()" required>
-                    <th:block th:each="c : ${allClasses}">
-                        <option th:value="${c.id}" th:text="${c.getName()}" th:selected="${c.id==classId}"></option>
-                    </th:block>
+                    <option th:each="c : ${allClasses}" th:value="${c.id}" th:text="${c.getName()}" th:selected="${c.id==classId}"></option>
                     <option value="1" th:remove="all">Class Name</option>
                 </select>
                 <div class="valid-feedback">
@@ -30,9 +28,7 @@
                 <label for="classStudents" class="form-label">Student</label>
                 <select name="stuId" id="classStudents" class="form-select" required>
                     <option value="">Select a Student</option>
-                    <th:block th:each="s : ${classStudents}">
-                        <option th:value="${s.id}" th:text="${s.firstName + ' ' + s.lastName}" th:selected="${s.id==rollCallModel?.stuId}"></option>
-                    </th:block>
+                    <option th:each="s : ${classStudents}" th:value="${s.id}" th:text="${s.firstName + ' ' + s.lastName}" th:selected="${s.id==rollCallModel?.stuId}"></option>
                     <option value="1" th:remove="all">Class Name</option>
                 </select>
                 <div class="valid-feedback">
@@ -83,6 +79,7 @@
     </section>
 </main>
 <th:block th:replace="fragments :: common_scripts"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
 <script th:inline="javascript">
     function changeClass() {
       const classId = $("#classId").val();
@@ -107,23 +104,6 @@
           }
       );
     }
-
-    (() => {
-      'use strict'
-
-      const forms = document.querySelectorAll('.needs-validation')
-
-      Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-
-          form.classList.add('was-validated')
-        }, false)
-      })
-    })()
 </script>
 </body>
 </html>

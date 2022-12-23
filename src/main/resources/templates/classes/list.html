@@ -8,11 +8,9 @@
     <nav th:replace="fragments :: navbar('classes')"></nav>
 
     <section class="container-md">
-        <div>
-            <form action="#" th:action="@{/roll}" method="post">
+        <h1>Classes</h1>
 
-            </form>
-        </div>
+        <a class="btn btn-primary" th:href="@{/classes/add}">Add</a>
         <div>
             <table class="table">
                 <thead>

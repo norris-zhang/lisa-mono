@@ -23,4 +23,9 @@ public class ClassService {
         }
         return allClasses;
     }
+
+    @Transactional
+    public void createClass(LisaClass lisaClass) {
+        classRepository.save(lisaClass);
+    }
 }
