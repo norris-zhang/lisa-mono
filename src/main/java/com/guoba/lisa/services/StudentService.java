@@ -53,4 +53,9 @@ public class StudentService {
         });
         return students;
     }
+
+    @Transactional
+    public void createStudent(Student student) {
+        studentRepository.save(student);
+    }
 }

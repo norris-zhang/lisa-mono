@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Classes</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('all-students')"></nav>
+
+    <section class="container-md">
+        <h1>Add a Student</h1>
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <form action="#" th:action="@{/students/add}" method="post" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" th:value="${model?.firstName}" maxlength="255" required placeholder="Example: John">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the first name.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" th:value="${model?.lastName}" maxlength="255" placeholder="Example: Smith">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the last name.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" name="dob" th:value="${model?.dob}">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please pick a date.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="enrolmentDate" class="form-label">Enrolment Date</label>
+                <input type="date" class="form-control" id="enrolmentDate" name="enrolmentDate" th:value="${model?.enrolmentDate}">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please pick a date.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="credits" class="form-label">Initial Credits</label>
+                <input type="number" class="form-control" id="credits" name="credits" th:value="${model?.credits}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the initial credits.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
+</body>
+</html>
