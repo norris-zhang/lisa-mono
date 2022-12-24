@@ -43,4 +43,14 @@ public class StudentService {
         });
         return voList;
     }
+
+    public List<Student> findStudentsOutOfClass(Long classId) {
+        List<Student> students = studentRepository.findStudentsOutOfClass(classId);
+        students.forEach(s -> {
+            if (!Hibernate.isInitialized(s.getClasses())) {
+                Hibernate.initialize(s.getClasses());
+            }
+        });
+        return students;
+    }
 }

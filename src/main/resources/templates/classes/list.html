@@ -29,7 +29,7 @@
                     <td th:text="${c.startTime + '-' + c.endTime}">1.30pm</td>
 <!--                    <td th:text="${c.endTime}">2.30pm</td>-->
                     <td>
-                        <a href="#" class="btn btn-link">Students</a>
+                        <a href="#" class="btn btn-link" th:href="@{/lclass/students(classId=${c.id})}" th:text="${'Students('+c.students.size()+')'}">Students</a>
                         <a href="#" class="btn btn-link">Delete</a>
                     </td>
                 </tr>

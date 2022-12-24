@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Classes</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('classes')"></nav>
+
+    <section class="container-md">
+        <h1>Add a Student to a Class</h1>
+        <details open>
+            <summary>Class Info</summary>
+            <p th:text="${classInfo}"></p>
+        </details>
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <form action="#" th:action="@{/lclass/addstu}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="classId" th:value="${classId}">
+            <div class="mb-3">
+                <label for="studentIds" class="form-label">Select students to add to class</label>
+                <select name="studentIds" id="studentIds" class="form-select" required multiple>
+                    <option value="1" th:each="stu : ${candidateStudents}" th:value="${stu.id}" th:text="${stu.desc}">1</option>
+                </select>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please select at least one student.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
+</body>
+</html>
