@@ -35,6 +35,9 @@ public class Student {
     private LocalDate dateOfBirth;
     @EqualsAndHashCode.Include
     @ToString.Include
+    private LocalDate enrolledOn;
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private Integer credits;
 
     @ManyToOne

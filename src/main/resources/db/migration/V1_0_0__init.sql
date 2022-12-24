@@ -37,11 +37,12 @@ create table "student" (
     "first_name" varchar(255) not null,
     "last_name" varchar(255) null,
     "date_of_birth" date null,
+    "enrolled_on" date null,
     "credits" integer not null,
     constraint fk_stu_institution_id foreign key ("institution_id") references "institution"("id")
 );
 
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongchen', 'Zhang', '2014-03-28', 4);
+insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "enrolled_on", "credits") values (1, 'Dongchen', 'Zhang', '2014-03-28', '2018-07-01', 4);
 insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongyu', 'Zhang', '2014-03-28', 4);
 
 create table "student_class" (
