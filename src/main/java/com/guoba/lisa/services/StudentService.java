@@ -1,8 +1,12 @@
 package com.guoba.lisa.services;
 
 import com.guoba.lisa.datamodel.LisaClass;
+import com.guoba.lisa.datamodel.Parent;
+import com.guoba.lisa.datamodel.ParentStudent;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.StudentVo;
+import com.guoba.lisa.repositories.ParentRepository;
+import com.guoba.lisa.repositories.ParentStudentRepository;
 import com.guoba.lisa.repositories.StudentRepository;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.PageRequest;
@@ -18,8 +22,15 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final ParentRepository parentRepository;
+    private final ParentStudentRepository psRepository;
 
-    public StudentService(StudentRepository studentRepository) {this.studentRepository = studentRepository;}
+    public StudentService(StudentRepository studentRepository, ParentRepository parentRepository,
+                          ParentStudentRepository psRepository) {
+        this.studentRepository = studentRepository;
+        this.parentRepository = parentRepository;
+        this.psRepository = psRepository;
+    }
 
     public List<Student> getClassStudents(Long classId) {
         return studentRepository.findByClassesId(classId);
@@ -55,7 +66,14 @@ public class StudentService {
     }
 
     @Transactional
-    public void createStudent(Student student) {
+    public void createStudent(Student student, Boolean parentInfo, Parent parent) {
         studentRepository.save(student);
+        if (Boolean.TRUE.equals(parentInfo)) {
+            parentRepository.save(parent);
+            ParentStudent ps = new ParentStudent();
+            ps.setStudent(student);
+            ps.setParent(parent);
+            psRepository.save(ps);
+        }
     }
 }

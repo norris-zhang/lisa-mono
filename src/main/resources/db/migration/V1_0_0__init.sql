@@ -58,9 +58,11 @@ insert into "student_class" ("class_id", "student_id") values (1, 2);
 
 create table "parent" (
     "id" bigserial primary key,
+    "institution_id" bigint not null,
     "first_name" varchar(255) not null,
     "last_name" varchar(255) null,
-    "contact_number" varchar(20) null
+    "contact_number" varchar(20) null,
+    constraint fk_par_institution_id foreign key ("institution_id") references "institution"("id")
 );
 
 create table "parent_student" (

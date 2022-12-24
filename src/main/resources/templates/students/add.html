@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="lastName" class="form-label">First Name</label>
+                <label for="lastName" class="form-label">Last Name</label>
                 <input type="text" class="form-control" id="lastName" name="lastName" th:value="${model?.lastName}" maxlength="255" placeholder="Example: Smith">
                 <div class="valid-feedback">
                     Looks good!
@@ -61,11 +61,61 @@
                     Please enter the initial credits.
                 </div>
             </div>
+            <hr>
+            <div class="mb-3">
+                <input type="checkbox" name="parentInfo" id="parentcb" onchange="toggleParentInfo()">
+                <label for="parentcb" class="form-label">Parent/Guardian</label>
+            </div>
+
+            <div id="parentSection">
+                <div class="mb-3">
+                    <label for="parentFirstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="parentFirstName" name="parentFirstName" th:value="${model?.parentFirstName}" maxlength="255" placeholder="Example: John">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please enter the first name.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="parentLastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="parentLastName" name="parentLastName" th:value="${model?.parentLastName}" maxlength="255" placeholder="Example: Smith">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please enter the last name.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="contactNumber" class="form-label">Contact Number</label>
+                    <input type="text" class="form-control" id="contactNumber" name="contactNumber" th:value="${model?.contactNumber}" maxlength="255" placeholder="Example: 021 1234 5678 or 微信 arkwrightzn">
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please enter a contact number.
+                    </div>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </section>
 </main>
 <th:block th:replace="fragments :: common_scripts"></th:block>
 <script th:src="@{/js/form-validation.js}"></script>
+<script th:inline="javascript">
+    function toggleParentInfo() {
+      const isShowParentInfo = $("#parentcb")[0].checked;
+      console.log(isShowParentInfo);
+      if (isShowParentInfo) {
+        $("#parentSection").show();
+      } else {
+        $("#parentSection").hide();
+      }
+    }
+    toggleParentInfo();
+</script>
 </body>
 </html>

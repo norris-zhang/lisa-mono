@@ -11,4 +11,9 @@ public class AddStudent {
     private LocalDate dob;
     private LocalDate enrolmentDate;
     private Integer credits;
+
+    private Boolean parentInfo;
+    private String parentFirstName;
+    private String parentLastName;
+    private String contactNumber;
 }

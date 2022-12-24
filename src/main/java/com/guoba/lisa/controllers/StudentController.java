@@ -2,6 +2,7 @@ package com.guoba.lisa.controllers;
 
 import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.datamodel.Institution;
+import com.guoba.lisa.datamodel.Parent;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.StudentVo;
 import com.guoba.lisa.services.StudentService;
@@ -26,7 +27,7 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping(path = "/api/students")
-    public @ResponseBody List<Student> classStudents(@RequestParam(name = "classId", required = true) Long classId, Model model) {
+    public @ResponseBody List<Student> classStudents(Long classId, Model model) {
         return studentService.getClassStudents(classId);
     }
 
@@ -63,8 +64,14 @@ public class StudentController {
         student.setEnrolledOn(addStudent.getEnrolmentDate());
         student.setCredits(addStudent.getCredits());
 
+        Parent parent = new Parent();
+        parent.setInstitution(institution);
+        parent.setFirstName(addStudent.getParentFirstName());
+        parent.setLastName(addStudent.getParentLastName());
+        parent.setContactNumber(addStudent.getContactNumber());
+
         try {
-            studentService.createStudent(student);
+            studentService.createStudent(student, addStudent.getParentInfo(), parent);
 
             return "redirect:/students";
         } catch (Exception e) {
