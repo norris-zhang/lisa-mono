@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Add a work</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('classes')"></nav>
+
+    <section class="container-md">
+        <h1>Add a Student work</h1>
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <form action="#" th:action="@{/works/add}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <input type="hidden" name="stuId" th:value="${student.id}">
+            <div class="mb-3">
+                <label for="student" class="form-label">Work for Student</label>
+                <input type="text" class="form-control" id="student" name="studentName" th:value="${student.firstName + ' ' + student.lastName}" disabled>
+            </div>
+            <div class="mb-3">
+                <label for="workClass" class="form-label">Work for Class</label>
+                <select name="workClass" id="workClass" class="form-select" required>
+                    <option th:value="${c.id}" th:each="c : ${student.classes}" th:text="${c.name}" th:selected="${addWork?.workClass==c.id}"></option>
+                </select>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please select a class.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="workDate" class="form-label">Date</label>
+                <input type="date" class="form-control" id="workDate" name="workDate" th:value="${addWork?.workDate}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please pick a date.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="workTitle" class="form-label">Title</label>
+                <input type="text" class="form-control" id="workTitle" name="workTitle" th:value="${addWork?.workTitle}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter a title.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="workDesc" class="form-label">Description (optional)</label>
+                <textarea name="workDesc" id="workDesc" class="form-control" th:text="${addWork?.workDesc}" maxlength="2000"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="workPic" class="form-label">Upload a Picture</label>
+                <input type="file" class="form-control" id="workPic" name="workPic" accept="image/*" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please select a photo.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
+</body>
+</html>

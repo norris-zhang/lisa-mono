@@ -80,7 +80,9 @@ create table "picture" (
     "file_name" varchar(255) not null,
     "extension" varchar(20) not null,
     "mimetype" varchar(255) not null,
-    "path" varchar(255) not null
+    "path" varchar(255) not null,
+    "institution_id" bigint not null,
+    constraint fk_pic_institution_id foreign key ("institution_id") references "institution"("id")
 );
 
 create table "work" (
@@ -91,8 +93,10 @@ create table "work" (
     "upload_date" timestamp with time zone not null default now(),
     "picture_id" bigint not null,
     "student_id" bigint not null,
+    "class_id" bigint not null,
     constraint fk_picture_id foreign key ("picture_id") references "picture"("id"),
-    constraint fk_student_id foreign key ("student_id") references "student"("id")
+    constraint fk_student_id foreign key ("student_id") references "student"("id"),
+    constraint fk_wor_class_id foreign key ("class_id") references "lisa_class"("id")
 );
 
 create table "roll" (

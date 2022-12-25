@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Student Work</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('all-students')"></nav>
+
+    <section class="container-md">
+        <h1>Student Work</h1>
+
+        <details open>
+            <summary>Student Info</summary>
+            <div>
+                <p th:text="${studentWorkVo.name}"></p>
+                <p>
+                    <span th:text="${'Date of Birth ' + studentWorkVo.dateOfBirth}"></span>
+                    <span th:if="${studentWorkVo.age != null}" th:text="${', ' + studentWorkVo.age + ' years old'}"></span>
+                </p>
+                <p th:text="${'In classes: ' + studentWorkVo.classes}"></p>
+                <p th:if="${studentWorkVo.enrolledOn != null}" th:text="${'Started in ' + #temporals.format(studentWorkVo.enrolledOn, 'MMMM yyyy')}"></p>
+                <div th:unless="${#strings.isEmpty(studentWorkVo.parentInfo)}">
+                    <hr>
+                    <p th:text="${'Parent/Guardian: ' + studentWorkVo.parentInfo}"></p>
+                </div>
+            </div>
+        </details>
+
+        <a class="btn btn-primary" th:href="@{/works/add(stuId=${studentWorkVo.id})}">Upload</a>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    Student works
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-4" th:each="work : ${studentWorkVo.works}">
+                    <div>
+                        <img src="#" th:src="@{|/picture/${work.picId}|}" alt="demo" class="img-fluid">
+                    </div>
+                    <div>
+                        <p th:text="${work.title}"></p>
+                        <p th:text="${work.date}"></p>
+                        <p th:text="${work.description}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+</body>
+</html>

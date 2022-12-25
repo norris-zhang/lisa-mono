@@ -5,6 +5,7 @@ import com.guoba.lisa.datamodel.Institution;
 import com.guoba.lisa.datamodel.Parent;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.StudentVo;
+import com.guoba.lisa.dtos.StudentWorkVo;
 import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.web.models.AddStudent;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -85,5 +87,20 @@ public class StudentController {
     @GetMapping(path = "/my")
     public String studentCentre() {
         return "students/my";
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping(path = "/student/{stuId}")
+    public String studentDetail(@PathVariable Long stuId, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser) auth.getPrincipal();
+        try {
+            StudentWorkVo swVo = studentService.getStudentWork(stuId, authUser.getInstitutionId());
+            model.addAttribute("studentWorkVo", swVo);
+            return "students/view";
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/classes");
+            return "404";
+        }
     }
 }

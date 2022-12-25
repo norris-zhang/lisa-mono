@@ -33,6 +33,7 @@
                     <td th:text="${s.credits}">2</td>
                     <td th:text="${s.enrolledOn}">2022-09-18</td>
                     <td>
+                        <a href="#" class="btn btn-link" th:href="@{|/student/${s.id}|}">View Detail</a>
                         <a href="#" class="btn btn-link">Remove from Class</a>
                     </td>
                 </tr>
