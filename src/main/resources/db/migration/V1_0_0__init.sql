@@ -15,6 +15,7 @@ create table "user" (
 
 insert into "institution" ("name") values ('LisaArt');
 insert into "user" ("username", "password", "institution_id", "role") values ('lisa', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'TEACHER');
+insert into "user" ("username", "password", "institution_id", "role") values ('dongchenz', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'STUDENT');
 
 create table "lisa_class" (
     "id" bigserial primary key,

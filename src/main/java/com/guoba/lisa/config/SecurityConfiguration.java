@@ -21,26 +21,26 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            @Autowired AuthenticationProvider authProvider,
                                            @Autowired UserDetailsService userDetailsService) throws Exception {
-//        TokenBasedRememberMeServices rmService = new TokenBasedRememberMeServices("cynzrm", userDetailsService);
         http
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/roll")
+                        .defaultSuccessUrl("/")
                         .permitAll())
                 .addFilterBefore(
                         new InstitutionalUsernamePasswordAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class)
-                .rememberMe(withDefaults())//.rememberMeServices(rmService)
+                .rememberMe(withDefaults())
+                .logout().logoutSuccessUrl("/").clearAuthentication(true).and()
                 .csrf().disable();
         return http.build();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/user/", "/ignore2");
+        return (web) -> web.ignoring().requestMatchers("/user/", "/ignore2");
     }
 
     @Bean

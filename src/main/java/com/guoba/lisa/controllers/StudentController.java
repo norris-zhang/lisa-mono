@@ -80,4 +80,10 @@ public class StudentController {
             return "students/add";
         }
     }
+
+    @PreAuthorize("hasAnyRole('STUDENT')")
+    @GetMapping(path = "/my")
+    public String studentCentre() {
+        return "students/my";
+    }
 }
