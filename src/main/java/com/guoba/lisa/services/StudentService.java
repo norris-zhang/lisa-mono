@@ -135,4 +135,10 @@ public class StudentService {
         }
         return student;
     }
+
+    public StudentWorkVo getStudentWorkByLoginUserId(Long userId, Long institutionId) throws IllegalAccessException {
+        Student student = studentRepository.findByUserId(userId);
+
+        return getStudentWork(student.getId(), institutionId);
+    }
 }

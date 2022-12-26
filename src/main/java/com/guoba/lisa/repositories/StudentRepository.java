@@ -15,4 +15,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findStudentsOutOfClass(Long classId);
 
     List<Student> findByInstitutionId(Long institutionId, Pageable page);
+
+    Student findByUserId(Long userId);
 }

@@ -85,8 +85,15 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping(path = "/my")
-    public String studentCentre() {
-        return "students/my";
+    public String studentCentre(Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser) auth.getPrincipal();
+        try {
+            StudentWorkVo studentWork = studentService.getStudentWorkByLoginUserId(authUser.getUserId(), authUser.getInstitutionId());
+            model.addAttribute("studentWorkVo", studentWork);
+            return "students/my";
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
