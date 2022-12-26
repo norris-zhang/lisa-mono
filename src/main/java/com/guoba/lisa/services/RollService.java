@@ -4,6 +4,7 @@ import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.Pair;
+import com.guoba.lisa.dtos.RollCallVo;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.dtos.RollVo.RollVoItem;
 import com.guoba.lisa.exceptions.RollException;
@@ -84,6 +85,7 @@ public class RollService {
             RollVoItem voItem = new RollVoItem();
             voItem.setStudentId(stu.getId());
             voItem.setName(stu.getFirstName() + (isBlank(stu.getLastName()) ? "" : " " + stu.getLastName()));
+            voItem.setCredits(stu.getCredits());
 
             List<Pair<Boolean, Integer>> list = new ArrayList<>();
             for (LocalDate classDate : vo.getDates()) {
@@ -116,11 +118,11 @@ public class RollService {
     }
 
     @Transactional(readOnly = false)
-    public Roll rollCall(Long stuId,
-                         Long classId,
-                         LocalDate rollDate,
-                         boolean isPresent,
-                         Boolean isDeduct) throws RollException {
+    public RollCallVo rollCall(Long stuId,
+                               Long classId,
+                               LocalDate rollDate,
+                               boolean isPresent,
+                               Boolean isDeduct) throws RollException {
         LisaClass clazz = classRepository.getReferenceById(classId);
         String weekday = clazz.getWeekday();
         DayOfWeek dayOfWeek = rollDate.getDayOfWeek();
@@ -154,7 +156,7 @@ public class RollService {
         if (isPresent || (TRUE.equals(isDeduct))) {
             updateSubsequentRolls(stuId, classId, rollDate, newCreditBalance);
         }
-        return roll;
+        return RollCallVo.builder().roll(roll).stuId(student.getId()).credits(student.getCredits()).build();
     }
 
     private void updateStudentCredits(Student student, Integer newCreditBalance) {

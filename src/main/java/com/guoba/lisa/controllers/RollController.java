@@ -4,6 +4,7 @@ import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.datamodel.Student;
+import com.guoba.lisa.dtos.RollCallVo;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.ClassService;
@@ -67,10 +68,12 @@ public class RollController {
                                                       String status,
                                                       @RequestParam(required = false) Boolean isDeduct) {
         try {
-            Roll roll = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status), isDeduct);
+            RollCallVo rollCallVo = rollService.rollCall(stuId, classId, rollDate, "PRESENT".equals(status), isDeduct);
+            Roll roll = rollCallVo.getRoll();
             Map<String, String> map = new HashMap<>();
             map.put("status", "ok");
-            map.put("credit", roll.getCreditBalance().toString());
+            map.put("stuId", rollCallVo.getStuId().toString());
+            map.put("credit", rollCallVo.getCredits().toString());
             map.put("isPresent", roll.getIsPresent());
             return map;
         } catch (RollException e) {

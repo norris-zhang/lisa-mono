@@ -22,7 +22,7 @@
             </form>
         </div>
         <div>
-            <table class="table">
+            <table class="table" style="text-align: center;">
                 <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -40,19 +40,18 @@
                 </thead>
                 <tbody>
                 <tr th:each="stu : ${rollVo.getItems()}">
-                    <td th:text="${stu.getName()}">Dongchen</td>
+                    <td>
+                        <p th:text="${stu.getName()}"></p>
+                        <p>Credits: <span th:id="${'stu_credit_4_' + stu.studentId}" th:text="${stu.credits}"></span></p>
+                    </td>
                     <td th:each="roll : ${stu.getRollList()}">
                         <th:block th:if="${roll == null}">
                             <button type="button" class="btn btn-link" th:attr="data-stu-id=${stu.studentId},data-roll-date=${rollVo.dates[rollStat.index]},data-class-id=${rollVo.selectedClass.id}" onclick="return markPresent(this)">Present</button>
                             <br>
                             <button type="button" class="btn btn-link" th:attr="data-stu-id=${stu.studentId},data-roll-date=${rollVo.dates[rollStat.index]},data-class-id=${rollVo.selectedClass.id}" onclick="return markAbsent(this)">Absent</button>
                         </th:block>
-                        <th:block th:if="${roll?.getFirst()}">
-                            &#9989; <span th:text="${roll?.second}">8</span>
-                        </th:block>
-                        <th:block th:if="${roll != null and (not roll?.getFirst())}">
-                            &#10060; <span th:text="${roll?.second}">8</span>
-                        </th:block>
+                        <th:block th:if="${roll?.first}">&#9989;</th:block>
+                        <th:block th:if="${roll != null and (not roll?.getFirst())}">&#10060;</th:block>
                     </td>
                     <td th:remove="all">&#10006; 8</td>
                     <td th:remove="all">&#10004; 7</td>
@@ -171,9 +170,9 @@
                 v: new Date().getDate()
             },
             json => {
-                console.log(json);
                 if (json.status === 'ok') {
-                    $(linkTarget).parent().html('&#9989; <span>'+json.credit+'</span>')
+                    $(linkTarget).parent().html('&#9989;');
+                    $('#stu_credit_4_' + json.stuId).html(json.credit);
                 } else {
                     alert(json.message);
                 }
@@ -199,10 +198,10 @@
                     v: new Date().getDate()
                 },
                 json => {
-                    console.log(json);
                     if (json.status === 'ok') {
                         const icon = json.isPresent === 'Y' ? '&#9989;' : '&#10060;'
-                        $(linkTarget).parent().html(icon + ' <span>'+json.credit+'</span>')
+                        $(linkTarget).parent().html(icon);
+                      $('#stu_credit_4_' + json.stuId).html(json.credit);
                     } else {
                         alert(json.message);
                     }

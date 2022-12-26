@@ -17,6 +17,7 @@ public class RollVo {
     public static class RollVoItem {
         private Long studentId;
         private String name;
+        private Integer credits;
         private List<Pair<Boolean, Integer>> rollList;
     }
 }
