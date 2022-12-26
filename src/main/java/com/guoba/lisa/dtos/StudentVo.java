@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class StudentVo {
+    private Long id;
     private String name;
     private LocalDate dateOfBirth;
     private Integer credits;

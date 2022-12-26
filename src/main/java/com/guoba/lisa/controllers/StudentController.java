@@ -3,11 +3,13 @@ package com.guoba.lisa.controllers;
 import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.datamodel.Institution;
 import com.guoba.lisa.datamodel.Parent;
+import com.guoba.lisa.datamodel.Renew;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.StudentVo;
 import com.guoba.lisa.dtos.StudentWorkVo;
 import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.web.models.AddStudent;
+import com.guoba.lisa.web.models.AddTopup;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Controller
@@ -107,6 +110,41 @@ public class StudentController {
         } catch (IllegalAccessException e) {
             model.addAttribute("errorMsg", e.getMessage());
             model.addAttribute("gobackurl", "/classes");
+            return "404";
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping(path = "/student/topup")
+    public String topup(Long stuId, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser) auth.getPrincipal();
+        try {
+            Student student = studentService.getStudentByIdInitTopupHistory(stuId, authUser.getInstitutionId());
+            model.addAttribute("student", student);
+            return "students/topup";
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/students");
+            return "404";
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @PostMapping(path = "/student/topup")
+    public String topup(@ModelAttribute AddTopup addTopup, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser) auth.getPrincipal();
+
+        Renew renew = new Renew();
+        renew.setDate(addTopup.getTopupDate());
+        renew.setInputDate(ZonedDateTime.now());
+        renew.setTopupAmount(addTopup.getTopupAmount());
+
+        try {
+            studentService.topup(addTopup.getStuId(), authUser.getInstitutionId(), renew);
+            return "redirect:/student/topup?stuId=" + addTopup.getStuId();
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/students");
             return "404";
         }
     }

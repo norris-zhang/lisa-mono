@@ -1,31 +1,50 @@
 package com.guoba.lisa.datamodel;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Renew {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @ToString.Include
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private Student student;
-    @ManyToOne
-    @JoinColumn(name = "class_id")
-    private LisaClass clazz;
-    private ZonedDateTime date;
+    @ToString.Include
+    @EqualsAndHashCode.Include
+    private LocalDate date;
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private ZonedDateTime inputDate;
-    private Integer currentCredit;
-    private Integer newCredit;
+    @ToString.Include
+    @EqualsAndHashCode.Include
+    private Integer openingBalance;
+    @ToString.Include
+    @EqualsAndHashCode.Include
+    private Integer topupAmount;
+    @ToString.Include
+    @EqualsAndHashCode.Include
+    private Integer newBalance;
 }

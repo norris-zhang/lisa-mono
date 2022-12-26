@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(~{::title}, ~{}, ~{})}">
+    <title>Top up</title>
+</head>
+<body>
+<main>
+    <nav th:replace="~{fragments :: navbar('all-students')}"></nav>
+
+    <section class="container-md">
+        <h1>Student Top-up</h1>
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <div>
+            <p th:text="${'Student: ' + student.firstName + ' ' + student.lastName}"></p>
+            <p th:text="${'Credits: ' + student.credits}"></p>
+        </div>
+        <form action="#" th:action="@{/student/topup}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="stuId" th:value="${student.id}">
+            <div class="mb-3">
+                <label for="topupDate" class="form-label">Top-up Date</label>
+                <input type="date" class="form-control" id="topupDate" name="topupDate" th:value="${addTopup?.topupDate}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please pick a date.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="topupAmount" class="form-label">Top-up Amount (credits)</label>
+                <input type="number" class="form-control" id="topupAmount" name="topupAmount" th:value="${addTopup?.topupAmount}" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the credit amount.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <hr>
+        <div>
+            <div>Top-up history</div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Processed Date</th>
+                    <th scope="col">Transaction Date</th>
+                    <th scope="col">Opening Balance</th>
+                    <th scope="col">Top-up Amount</th>
+                    <th scope="col">New Balance</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${student.renews}">
+                    <td th:text="${#temporals.format(r.inputDate, 'yyyy-MM-dd HH:mm')}">2022-12-12</td>
+                    <td th:text="${r.date}">2022-12-12</td>
+                    <td th:text="${r.openingBalance}">-1</td>
+                    <td th:text="${r.topupAmount}">11</td>
+                    <td th:text="${r.newBalance}">10</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<th:block th:replace="~{fragments :: common_scripts}"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
+</body>
+</html>

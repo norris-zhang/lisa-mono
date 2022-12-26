@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+<head th:replace="~{fragments :: head(~{::title}, ~{}, ~{})}">
     <title>Classes</title>
 </head>
 <body>
 <main>
-    <nav th:replace="fragments :: navbar('all-students')"></nav>
+    <nav th:replace="~{fragments :: navbar('all-students')}"></nav>
 
     <section class="container-md">
         <h1>Add a Student</h1>
@@ -103,7 +103,7 @@
         </form>
     </section>
 </main>
-<th:block th:replace="fragments :: common_scripts"></th:block>
+<th:block th:replace="~{fragments :: common_scripts}"></th:block>
 <script th:src="@{/js/form-validation.js}"></script>
 <script th:inline="javascript">
     function toggleParentInfo() {

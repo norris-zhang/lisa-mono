@@ -164,10 +164,10 @@ VALUES(2, 1, '2022-09-03', now(), 'Y', 4);
 create table "renew" (
     "id" bigserial primary key,
     "student_id" bigint not null,
-    "class_id" bigint not null,
     "date" date null,
     "input_date" timestamp with time zone not null default now(),
-    "current_credit" integer not null,
-    "new_credit" integer not null,
-    constraint fk_student_id foreign key ("student_id") references "student"("id")
+    "opening_balance" integer not null,
+    "topup_amount" integer not null,
+    "new_balance" integer not null,
+    constraint fk_ren_student_id foreign key ("student_id") references "student"("id")
 );

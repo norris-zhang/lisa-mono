@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Transient;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import lombok.ToString;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -69,5 +71,9 @@ public class Student {
     @JsonIgnore
     @OneToMany(mappedBy = "student")
     private Set<Work> works;
+    @JsonIgnore
+    @OneToMany(mappedBy = "student")
+    @OrderBy("inputDate DESC")
+    private List<Renew> renews;
 
 }

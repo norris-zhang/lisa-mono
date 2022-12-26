@@ -3,14 +3,15 @@ package com.guoba.lisa.services;
 import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Parent;
 import com.guoba.lisa.datamodel.ParentStudent;
+import com.guoba.lisa.datamodel.Renew;
 import com.guoba.lisa.datamodel.Student;
-import com.guoba.lisa.datamodel.Work;
 import com.guoba.lisa.dtos.StudentVo;
 import com.guoba.lisa.dtos.StudentWorkVo;
 import com.guoba.lisa.dtos.WorkVo;
 import com.guoba.lisa.helpers.DateTimeHelper;
 import com.guoba.lisa.repositories.ParentRepository;
 import com.guoba.lisa.repositories.ParentStudentRepository;
+import com.guoba.lisa.repositories.RenewRepository;
 import com.guoba.lisa.repositories.StudentRepository;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.PageRequest;
@@ -29,12 +30,14 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final ParentRepository parentRepository;
     private final ParentStudentRepository psRepository;
+    private final RenewRepository renewRepository;
 
     public StudentService(StudentRepository studentRepository, ParentRepository parentRepository,
-                          ParentStudentRepository psRepository) {
+                          ParentStudentRepository psRepository, RenewRepository renewRepository) {
         this.studentRepository = studentRepository;
         this.parentRepository = parentRepository;
         this.psRepository = psRepository;
+        this.renewRepository = renewRepository;
     }
 
     public List<Student> getClassStudents(Long classId) {
@@ -47,6 +50,7 @@ public class StudentService {
         List<StudentVo> voList = new ArrayList<>();
         students.forEach(s -> {
             StudentVo vo = new StudentVo();
+            vo.setId(s.getId());
             vo.setName(s.getFirstName() + " " + s.getLastName());
             vo.setDateOfBirth(s.getDateOfBirth());
             vo.setCredits(s.getCredits());
@@ -140,5 +144,25 @@ public class StudentService {
         Student student = studentRepository.findByUserId(userId);
 
         return getStudentWork(student.getId(), institutionId);
+    }
+
+    public Student getStudentByIdInitTopupHistory(Long stuId, Long institutionId) throws IllegalAccessException {
+        Student student = getStudentById(stuId, institutionId);
+        if (!Hibernate.isInitialized(student.getRenews())) {
+            Hibernate.initialize(student.getRenews());
+        }
+        return student;
+    }
+
+    @Transactional(rollbackFor = IllegalAccessException.class)
+    public void topup(Long stuId, Long institutionId, Renew renew) throws IllegalAccessException {
+        Student student = getStudentById(stuId, institutionId);
+        renew.setStudent(student);
+        renew.setOpeningBalance(student.getCredits());
+        Integer newBalance = student.getCredits() + renew.getTopupAmount();
+        renew.setNewBalance(newBalance);
+        renewRepository.save(renew);
+        student.setCredits(newBalance);
+        studentRepository.save(student);
     }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
-    <title>Classes</title>
+    <title>Students</title>
 </head>
 <body>
 <main>
@@ -31,6 +31,7 @@
                     <td th:text="${s.classes}">周六1.30-2.30</td>
                     <td th:text="${s.enrolledOn}">2022-09-18</td>
                     <td>
+                        <a href="#" class="btn btn-link" th:href="@{/student/topup(stuId=${s.id})}">Top-up</a>
                         <a href="#" class="btn btn-link">Update</a>
                         <a href="#" class="btn btn-link">Delete</a>
                     </td>
