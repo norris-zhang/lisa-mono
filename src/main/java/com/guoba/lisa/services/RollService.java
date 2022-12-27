@@ -3,7 +3,6 @@ package com.guoba.lisa.services;
 import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.datamodel.Student;
-import com.guoba.lisa.dtos.Pair;
 import com.guoba.lisa.dtos.RollCallVo;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.dtos.RollVo.RollVoItem;
@@ -26,11 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
@@ -87,13 +84,13 @@ public class RollService {
             voItem.setName(stu.getFirstName() + (isBlank(stu.getLastName()) ? "" : " " + stu.getLastName()));
             voItem.setCredits(stu.getCredits());
 
-            List<Pair<Boolean, Integer>> list = new ArrayList<>();
+            List<Boolean> list = new ArrayList<>();
             for (LocalDate classDate : vo.getDates()) {
                 Roll roll = map.get(stu.getId() + ":" + classDate);
                 if (roll == null) {
                     list.add(null);
                 } else {
-                    list.add(new Pair<>("Y".equals(roll.getIsPresent()), roll.getCreditBalance()));
+                    list.add("Y".equals(roll.getIsPresent()));
                 }
             }
             voItem.setRollList(list);
@@ -117,7 +114,7 @@ public class RollService {
                         .orElse(null));
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(rollbackFor = RollException.class)
     public RollCallVo rollCall(Long stuId,
                                Long classId,
                                LocalDate rollDate,
@@ -132,30 +129,17 @@ public class RollService {
         }
 
         Student student = studentRepository.getReferenceById(stuId);
-        Optional<Roll> previousRoll = rollRepository.findFirstByStudentIdAndClazzIdAndClassDateLessThanOrderByClassDateDesc(stuId, classId, rollDate);
-
-        // The new roll item's credit is determined by its previous roll item, or student's credit if no previous roll.
-        Integer rollCreditBal = 0;
-        if (previousRoll.isPresent()) {
-            rollCreditBal = previousRoll.get().getCreditBalance();
-        } else {
-            rollCreditBal = student.getCredits();
-        }
 
         // The final credit that is set to the student at last.
         Integer newCreditBalance = student.getCredits();
         if (isPresent || (TRUE.equals(isDeduct))) {
             newCreditBalance--;
-            rollCreditBal--;
         }
 
-        Roll roll = createRoll(classId, rollDate, isPresent, student, rollCreditBal);
+        Roll roll = createRoll(classId, rollDate, isPresent, student, isPresent || (TRUE.equals(isDeduct)));
 
         updateStudentCredits(student, newCreditBalance);
 
-        if (isPresent || (TRUE.equals(isDeduct))) {
-            updateSubsequentRolls(stuId, classId, rollDate, newCreditBalance);
-        }
         return RollCallVo.builder().roll(roll).stuId(student.getId()).credits(student.getCredits()).build();
     }
 
@@ -164,30 +148,16 @@ public class RollService {
         studentRepository.save(student);
     }
 
-    private Roll createRoll(Long classId, LocalDate rollDate, boolean isPresent, Student student, Integer rollCreditBal) {
+    private Roll createRoll(Long classId, LocalDate rollDate, boolean isPresent, Student student, boolean isDeduct) {
         Roll roll = new Roll();
         roll.setStudent(student);
         roll.setClazz(classRepository.getReferenceById(classId));
         roll.setClassDate(rollDate);
         roll.setIsPresent(isPresent ? "Y" : "N");
         roll.setInputDate(ZonedDateTime.now());
-        roll.setCreditBalance(rollCreditBal);
+        roll.setCreditRedeemed(isDeduct ? 1 : 0); // FIXME the number should be read from lisa_class
         rollRepository.save(roll);
         return roll;
     }
 
-    private void updateSubsequentRolls(Long stuId, Long classId, LocalDate rollDate, Integer newCreditBalance) throws RollException {
-        List<Roll> subsequentRolls = rollRepository.findByStudentIdAndClazzIdAndClassDateGreaterThan(stuId, classId, rollDate,
-            Sort.by(ASC, "classDate"));
-        for (Roll r : subsequentRolls) {
-            r.setCreditBalance(r.getCreditBalance() - 1);
-            rollRepository.save(r);
-        }
-        if (!subsequentRolls.isEmpty()) {
-            Roll lastRollEntity = subsequentRolls.get(subsequentRolls.size() - 1);
-            if (lastRollEntity.getCreditBalance() != newCreditBalance) {
-                throw new RollException("Found discrepancy between student credits and roll credits. Please contact administer.");
-            }
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package com.guoba.lisa.helpers;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,5 +21,12 @@ public class DateTimeHelperTest {
         int age9 = DateTimeHelper.calcYearDiff(LocalDate.of(2023, Month.MARCH, 29),
             LocalDate.of(2014, Month.MARCH, 28));
         Assertions.assertEquals(9, age9);
+    }
+
+    @Test
+    public void testLast30Days() {
+        Pair<LocalDate, LocalDate> pair = DateTimeHelper.lastMonth();
+        System.out.println(pair.getLeft());
+        System.out.println(pair.getRight());
     }
 }

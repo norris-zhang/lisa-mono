@@ -14,4 +14,6 @@ public interface RollRepository extends JpaRepository<Roll, Long> {
     List<Roll> findByStudentIdAndClazzIdAndClassDateGreaterThan(Long studentId, Long clazzId, LocalDate classDate, Sort sort);
 
     Optional<Roll> findFirstByStudentIdAndClazzIdAndClassDateLessThanOrderByClassDateDesc(Long studentId, Long clazzId, LocalDate classDate);
+
+    List<Roll> findByClassDateBetweenAndClazzInstitutionId(LocalDate startDate, LocalDate endDate, Long institutionId);
 }

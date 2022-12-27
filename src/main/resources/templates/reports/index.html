@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(~{::title}, ~{}, ~{})}">
+    <title>Report</title>
+</head>
+<body>
+<main>
+    <nav th:replace="~{fragments :: navbar('report')}"></nav>
+
+    <section class="container-md">
+        <h1>Report</h1>
+
+        <details open>
+            <summary>Brief</summary>
+            <div>
+                <span>Over</span>
+                <select name="statPeriod" id="statPeriod" onchange="changeDateRange()">
+                    <option value="1" th:selected="${vo.statPeriod==1}">the last 30 days</option>
+                    <option value="2" th:selected="${vo.statPeriod==2}">last month</option>
+                    <option value="3" th:selected="${vo.statPeriod==3}">this month</option>
+                    <option value="4" th:selected="${vo.statPeriod==4}">this year</option>
+                    <option value="5" th:selected="${vo.statPeriod==5}">last year</option>
+                    <option value="6" th:selected="${vo.statPeriod==6}">custom</option>
+                </select>
+                <div id="divDateRange">
+                    <form action="#" method="get" th:action="@{/report}">
+                        <input type="hidden" name="statPeriod" value="6">
+                        Start Date: <input type="date" name="startDate" id="statPeriodStartDate" th:value="${vo.startDate}">
+                        End Date: <input type="date" name="endDate" id="statPeriodEndDate" th:value="${vo.endDate}">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <ul>
+                <li>Number of Active Classes: <span th:text="${vo.activeClasses}">6</span></li>
+                <li>Number of Active Students: <span th:text="${vo.activeStudents}"></span></li>
+                <li>Owing Credits: <span th:text="${vo.owingCredits}"></span></li>
+                <li>Class sessions given: <span th:text="${vo.givenSessions}"></span></li>
+                <li>Top-up credits: <span th:text="${vo.topupCredits}"></span></li>
+                <li>Credits redeemed: <span th:text="${vo.redeemedCredits}"></span></li>
+                <li>Average credits per session: <span th:text="${#numbers.formatDecimal(vo.avgCreditsPerSession, 1, 2)}"></span></li>
+            </ul>
+        </details>
+        <hr>
+        <div>
+            <div>Low credit students</div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Credit Balance</th>
+                    <th scope="col">Last Top-up</th>
+                    <th scope="col">Top-up Amount</th>
+                    <th scope="col">Parent</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${vo.lowCreditStudents}">
+                    <td th:text="${s.name}">Norris Zhang</td>
+                    <td th:text="${s.credits}">-5</td>
+                    <td th:text="${s.lastTopup}">2022-12-12</td>
+                    <td th:text="${s.lastTopupAmount}">11</td>
+                    <td th:text="${s.parentName + ' (' + s.parentContact + ')'}">Norris Zhang (02102637833)</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<th:block th:replace="~{fragments :: common_scripts}"></th:block>
+<script th:inline="javascript">
+  (() => {
+    'use strict'
+    const statPeriodRange = $('#statPeriod').val();
+    if (statPeriodRange === '6') {
+      $('#divDateRange').show();
+    } else {
+      $('#divDateRange').hide();
+    }
+  })()
+
+  function changeDateRange() {
+    const statPeriodRange = $('#statPeriod').val();
+    if (statPeriodRange === '6') {
+      $('#divDateRange').show();
+      return;
+    }
+    $('#divDateRange').hide();
+    const url = '[(@{/report})]';
+    window.location.href = url + '?statPeriod=' + statPeriodRange;
+  }
+</script>
+</body>
+</html>

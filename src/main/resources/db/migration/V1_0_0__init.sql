@@ -108,58 +108,58 @@ create table "roll" (
     "class_date" date not null,
     "input_date" timestamp with time zone not null default now(),
     "is_present" char(1) not null,
-    "credit_balance" integer not null,
+    "credit_redeemed" integer not null default 1,
     constraint fk_student_id foreign key ("student_id") references "student"("id"),
     constraint fk_class_id foreign key ("class_id") references "lisa_class"("id")
 );
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(1, 1, '2022-07-30', now(), 'Y', 8);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(1, 1, '2022-07-30', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(1, 1, '2022-08-06', now(), 'Y', 7);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(1, 1, '2022-08-06', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(1, 1, '2022-08-13', now(), 'N', 7);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(1, 1, '2022-08-13', now(), 'N', 0);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(1, 1, '2022-08-20', now(), 'Y', 6);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(1, 1, '2022-08-20', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(1, 1, '2022-08-27', now(), 'Y', 5);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(1, 1, '2022-08-27', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(1, 1, '2022-09-03', now(), 'Y', 4);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(1, 1, '2022-09-03', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(2, 1, '2022-07-30', now(), 'Y', 8);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(2, 1, '2022-07-30', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(2, 1, '2022-08-06', now(), 'Y', 7);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(2, 1, '2022-08-06', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(2, 1, '2022-08-13', now(), 'N', 7);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(2, 1, '2022-08-13', now(), 'N', 0);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(2, 1, '2022-08-20', now(), 'Y', 6);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(2, 1, '2022-08-20', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(2, 1, '2022-08-27', now(), 'Y', 5);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(2, 1, '2022-08-27', now(), 'Y', 1);
 
 INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_balance)
-VALUES(2, 1, '2022-09-03', now(), 'Y', 4);
+(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
+VALUES(2, 1, '2022-09-03', now(), 'Y', 1);
 
 create table "renew" (
     "id" bigserial primary key,

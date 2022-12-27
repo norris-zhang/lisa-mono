@@ -18,6 +18,6 @@ public class RollVo {
         private Long studentId;
         private String name;
         private Integer credits;
-        private List<Pair<Boolean, Integer>> rollList;
+        private List<Boolean> rollList;
     }
 }

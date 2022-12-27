@@ -2,6 +2,7 @@ package com.guoba.lisa.repositories;
 
 import com.guoba.lisa.datamodel.Student;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -17,4 +18,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByInstitutionId(Long institutionId, Pageable page);
 
     Student findByUserId(Long userId);
+
+    @Query("select sum(s.credits) from Student s where s.institution.id=:institutionId")
+    Integer findSumCreditsByInstitutionId(Long institutionId);
+
+    List<Student> findByInstitutionIdAndCreditsLessThan(Long institutionId, Integer lowCreditThreshold, Sort sort);
 }

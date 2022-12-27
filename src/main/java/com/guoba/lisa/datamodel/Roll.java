@@ -51,5 +51,5 @@ public class Roll {
 
     @ToString.Include
     @EqualsAndHashCode.Include
-    private Integer creditBalance;
+    private Integer creditRedeemed;
 }
