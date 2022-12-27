@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+<head th:replace="~{fragments :: head(~{::title}, ~{}, ~{})}">
     <title>Students</title>
 </head>
 <body>
 <main>
-    <nav th:replace="fragments :: navbar('all-students')"></nav>
+    <nav th:replace="~{fragments :: navbar('all-students')}"></nav>
 
     <section class="container-md">
         <h1>Students</h1>
@@ -46,17 +46,17 @@
             </table>
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
+                    <li class="page-item" th:classappend="${students.first ? 'disabled' : ''}">
+                        <a class="page-link" href="#" aria-label="Previous" th:href="@{/students(page=${students.number-1})}">
                             <span aria-hidden="true">&laquo;</span>
                             <span class="sr-only">Previous</span>
                         </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
+                    <th:block th:if="${students.totalPages <= 3}">
+                        <li class="page-item" th:classappend="${students.number==(p-1) ? 'disabled' : ''}" th:each="p : ${#numbers.sequence(1, students.totalPages)}"><a class="page-link" href="#" th:text="${p}" th:href="@{/students(page=${p-1})}">1</a></li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${students.last ? 'disabled' : ''}">
+                        <a class="page-link" href="#" aria-label="Next" th:href="@{/students(page=${students.number+1})}">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Next</span>
                         </a>
@@ -66,6 +66,6 @@
         </div>
     </section>
 </main>
-<th:block th:replace="fragments :: common_scripts"></th:block>
+<th:block th:replace="~{fragments :: common_scripts}"></th:block>
 </body>
 </html>

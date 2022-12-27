@@ -10,6 +10,8 @@ import com.guoba.lisa.dtos.StudentWorkVo;
 import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.web.models.AddStudent;
 import com.guoba.lisa.web.models.AddTopup;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,8 @@ import java.util.List;
 
 @Controller
 public class StudentController {
+    @Value("${page.size.default}")
+    private Integer pageSize;
     private final StudentService studentService;
 
     public StudentController(StudentService studentService) {this.studentService = studentService;}
@@ -41,7 +45,7 @@ public class StudentController {
     public String listStudents(@RequestParam(required = false, defaultValue = "0") Integer page, Authentication auth,
                                Model model) {
         AuthUser authUser = (AuthUser)auth.getPrincipal();
-        List<StudentVo> students = studentService.getInstitutionStudents(authUser.getInstitutionId(), page, 20);
+        Page<StudentVo> students = studentService.getInstitutionStudents(authUser.getInstitutionId(), page, pageSize);
         model.addAttribute("students", students);
         return "students/list";
     }

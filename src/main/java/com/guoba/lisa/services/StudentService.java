@@ -14,6 +14,7 @@ import com.guoba.lisa.repositories.ParentStudentRepository;
 import com.guoba.lisa.repositories.RenewRepository;
 import com.guoba.lisa.repositories.StudentRepository;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -44,11 +45,11 @@ public class StudentService {
         return studentRepository.findByClassesId(classId);
     }
 
-    public List<StudentVo> getInstitutionStudents(Long institutionId, int pageNumber, int pageSize) {
-        List<Student> students = studentRepository.findByInstitutionId(institutionId, PageRequest.of(pageNumber,
+    public Page<StudentVo> getInstitutionStudents(Long institutionId, int pageNumber, int pageSize) {
+        Page<Student> students = studentRepository.findByInstitutionId(institutionId, PageRequest.of(pageNumber,
             pageSize, Direction.ASC, "firstName"));
-        List<StudentVo> voList = new ArrayList<>();
-        students.forEach(s -> {
+
+        return students.map(s -> {
             StudentVo vo = new StudentVo();
             vo.setId(s.getId());
             vo.setName(s.getFirstName() + " " + s.getLastName());
@@ -59,9 +60,8 @@ public class StudentService {
             }
             vo.setClasses(s.getClasses().stream().map(LisaClass::getName).collect(Collectors.joining(" | ")));
             vo.setEnrolledOn(s.getEnrolledOn());
-            voList.add(vo);
+            return vo;
         });
-        return voList;
     }
 
     public List<Student> findStudentsOutOfClass(Long classId) {

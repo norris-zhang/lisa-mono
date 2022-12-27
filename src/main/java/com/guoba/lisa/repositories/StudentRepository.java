@@ -1,6 +1,7 @@
 package com.guoba.lisa.repositories;
 
 import com.guoba.lisa.datamodel.Student;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         value = "select s.* from student s where not exists (select 1 from student_class sc where sc.class_id=:classId and sc.student_id=s.id)")
     List<Student> findStudentsOutOfClass(Long classId);
 
-    List<Student> findByInstitutionId(Long institutionId, Pageable page);
+    Page<Student> findByInstitutionId(Long institutionId, Pageable page);
 
     Student findByUserId(Long userId);
 
