@@ -61,6 +61,7 @@ public class ClassController {
         lisaClass.setWeekday(addClass.getClassDay());
         lisaClass.setStartTime(addClass.getStartTime());
         lisaClass.setEndTime(addClass.getEndTime());
+        lisaClass.setSessionCredits(addClass.getSessionCredits());
         try {
             classService.createClass(lisaClass);
             return "redirect:/classes";
@@ -92,9 +93,7 @@ public class ClassController {
 
         List<Student> candidateStudents = studentService.findStudentsOutOfClass(classId);
         List<StudentMultipleSelectVo> voList = new ArrayList<>();
-        candidateStudents.forEach(s -> {
-            voList.add(studentToMultipleSelectVo(s));
-        });
+        candidateStudents.forEach(s -> voList.add(studentToMultipleSelectVo(s)));
         model.addAttribute("candidateStudents", voList);
 
         return "classes/add-student";

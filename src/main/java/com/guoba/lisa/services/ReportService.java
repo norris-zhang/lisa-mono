@@ -52,7 +52,6 @@ public class ReportService {
             Long stuId = r.getStudent().getId();
             Long classId = r.getClazz().getId();
             LocalDate classDate = r.getClassDate();
-            // FIXME redeemedCredits needs to look at lisaClass.credit
             classIds.add(classId);
             studentIds.add(stuId);
             String classSessionKey = classId + ":" + classDate.format(ofPattern("yyyy-MM-dd"));

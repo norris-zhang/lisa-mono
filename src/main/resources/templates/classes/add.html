@@ -54,6 +54,16 @@
                     Please enter the class end time.
                 </div>
             </div>
+            <div class="mb-3">
+                <label for="sessionCredits" class="form-label">How many credits deducted per session</label>
+                <input type="number" class="form-control" id="sessionCredits" name="sessionCredits" th:value="${model?.sessionCredits ?: 1}" required min="0" step="1">
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter the class session credits.
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </section>

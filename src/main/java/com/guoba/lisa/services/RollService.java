@@ -125,18 +125,21 @@ public class RollService {
         DayOfWeek dayOfWeek = rollDate.getDayOfWeek();
         if (!Objects.equals(weekday, dayOfWeek.toString())) {
             throw new RollException(String.format("The roll date %s does not align with the class week day %s.",
-                rollDate.toString(), weekday));
+                rollDate, weekday));
         }
 
         Student student = studentRepository.getReferenceById(stuId);
 
         // The final credit that is set to the student at last.
         Integer newCreditBalance = student.getCredits();
+        Integer creditRedeemed = 0;
         if (isPresent || (TRUE.equals(isDeduct))) {
-            newCreditBalance--;
+            Integer sessionCredits = clazz.getSessionCredits();
+            newCreditBalance -= sessionCredits;
+            creditRedeemed = sessionCredits;
         }
 
-        Roll roll = createRoll(classId, rollDate, isPresent, student, isPresent || (TRUE.equals(isDeduct)));
+        Roll roll = createRoll(classId, rollDate, isPresent, student, creditRedeemed);
 
         updateStudentCredits(student, newCreditBalance);
 
@@ -148,14 +151,14 @@ public class RollService {
         studentRepository.save(student);
     }
 
-    private Roll createRoll(Long classId, LocalDate rollDate, boolean isPresent, Student student, boolean isDeduct) {
+    private Roll createRoll(Long classId, LocalDate rollDate, boolean isPresent, Student student, Integer creditRedeemed) {
         Roll roll = new Roll();
         roll.setStudent(student);
         roll.setClazz(classRepository.getReferenceById(classId));
         roll.setClassDate(rollDate);
         roll.setIsPresent(isPresent ? "Y" : "N");
         roll.setInputDate(ZonedDateTime.now());
-        roll.setCreditRedeemed(isDeduct ? 1 : 0); // FIXME the number should be read from lisa_class
+        roll.setCreditRedeemed(creditRedeemed);
         rollRepository.save(roll);
         return roll;
     }

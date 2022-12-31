@@ -45,6 +45,11 @@ public class LisaClass {
     @ToString.Include
     @Column(columnDefinition = "integer not null default 0")
     private Integer status = 0;
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    @Column(columnDefinition = "integer not null default 1")
+    private Integer sessionCredits = 1;
+
     @ManyToOne
     @JoinColumn(name = "institution_id")
     @EqualsAndHashCode.Include

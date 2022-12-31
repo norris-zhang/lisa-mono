@@ -25,12 +25,13 @@ create table "lisa_class" (
     "start_time" time not null,
     "end_time" time not null,
     "status" integer not null default 0,
+    "session_credits" integer not null default 1,
     constraint fk_cla_institution_id foreign key ("institution_id") references "institution"("id")
 );
 
 insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六1.30-2.30', 'SATURDAY', '13:30', '14:30');
 insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六3.00-4.00', 'SATURDAY', '15:00', '16:00');
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周二3.30-4.30', 'TUESDAY', '15:30', '16:30');
+insert into "lisa_class" (institution_id, name, weekday, start_time, end_time, session_credits) values ((select "id" from "institution" where "name"='LisaArt'), '周二3.30-5.30', 'TUESDAY', '15:30', '17:30', 2);
 
 create table "student" (
     "id" bigserial primary key,

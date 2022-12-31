@@ -9,7 +9,6 @@ import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.ClassService;
 import com.guoba.lisa.services.RollService;
-import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.web.models.RollCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -42,12 +40,10 @@ public class RollController {
     private final Logger logger = LoggerFactory.getLogger(RollController.class);
     private final RollService rollService;
     private final ClassService classService;
-    private final StudentService studentService;
 
-    public RollController(RollService rollService, ClassService classService, StudentService studentService) {
+    public RollController(RollService rollService, ClassService classService) {
         this.rollService = rollService;
         this.classService = classService;
-        this.studentService = studentService;
     }
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
@@ -97,7 +93,7 @@ public class RollController {
         AuthUser authUser = (AuthUser)auth.getPrincipal();
         List<LisaClass> allClasses = classService.getAllClassesInitStudentsByClassId(authUser.getInstitutionId(), classId);
         model.addAttribute("allClasses", allClasses);
-        Set<Student> classStudents = allClasses.stream().filter(c -> c.getId().equals(classId)).findAny().get().getStudents();
+        Set<Student> classStudents = allClasses.stream().filter(c -> c.getId().equals(classId)).findAny().orElseThrow().getStudents();
         model.addAttribute("classStudents", classStudents);
         return "roll/catch-up";
     }

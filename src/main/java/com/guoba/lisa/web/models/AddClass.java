@@ -10,4 +10,5 @@ public class AddClass {
     private String classDay;
     private LocalTime startTime;
     private LocalTime endTime;
+    private Integer sessionCredits;
 }
