@@ -110,12 +110,13 @@
             <input type="password" class="form-control" id="password" name="password">
             <label for="password">Password</label>
         </div>
-        <div class="form-floating">
-            <select name="institutionId" id="institutionId" class="form-select">
-                <option value="1" th:value="${institutionValue}" th:text="${institutionText}">LisaArt</option>
-            </select>
-            <label for="institutionId">Institution</label>
-        </div>
+<!--        <div class="form-floating">-->
+<!--            <select name="institutionId" id="institutionId" class="form-select">-->
+<!--                <option value="1" th:value="${institutionValue}" th:text="${institutionText}">LisaArt</option>-->
+<!--            </select>-->
+<!--            <label for="institutionId">Institution</label>-->
+<!--        </div>-->
+        <input type="hidden" name="institutionId" th:value="${institutionValue}">
         <div class="checkbox mb-3">
             <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me" checked>
             <label for="remember-me">Remember me</label>

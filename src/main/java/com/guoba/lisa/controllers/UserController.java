@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -31,16 +30,6 @@ public class UserController {
 
     @RequestMapping("/login")
     public String login(HttpSession session, HttpServletRequest request, Authentication auth, Model model) {
-        String institutionValue = request.getHeader("Institution-Value");
-        String institutionText = request.getHeader("Institution-Text");
-        if (isBlank(institutionValue)) {
-            institutionValue = "1";
-        }
-        if (isBlank(institutionText)) {
-            institutionText = "LisaArt";
-        }
-        model.addAttribute("institutionValue", institutionValue);
-        model.addAttribute("institutionText", institutionText);
         return "login";
     }
 }
