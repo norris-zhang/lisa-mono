@@ -14,8 +14,12 @@ create table "user" (
 );
 
 insert into "institution" ("name") values ('LisaArt');
+insert into "institution" ("name") values ('QianCheng');
+insert into "institution" ("name") values ('BanMuYuan');
 insert into "user" ("username", "password", "institution_id", "role") values ('lisa', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'TEACHER');
 insert into "user" ("username", "password", "institution_id", "role") values ('dongchenz', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'STUDENT');
+insert into "user" ("username", "password", "institution_id", "role") values ('qiancheng', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='QianCheng'), 'TEACHER');
+insert into "user" ("username", "password", "institution_id", "role") values ('banmuyuan', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='BanMuYuan'), 'TEACHER');
 
 create table "lisa_class" (
     "id" bigserial primary key,
