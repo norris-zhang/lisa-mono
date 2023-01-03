@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Service
 @Transactional(readOnly = true)
 public class StudentService {
@@ -45,9 +47,21 @@ public class StudentService {
         return studentRepository.findByClassesId(classId);
     }
 
-    public Page<StudentVo> getInstitutionStudents(Long institutionId, int pageNumber, int pageSize) {
-        Page<Student> students = studentRepository.findByInstitutionId(institutionId, PageRequest.of(pageNumber,
-            pageSize, Direction.ASC, "firstName"));
+    public Page<StudentVo> getInstitutionStudents(Long institutionId, int pageNumber, int pageSize, String keyword) {
+        Page<Student> students;
+        if (isBlank(keyword)) {
+            students = studentRepository.findByInstitutionId(institutionId,
+                PageRequest.of(pageNumber, pageSize, Direction.ASC, "firstName"));
+        } else {
+            String[] names = keyword.trim().split("\\s+");
+            if (names.length == 1) {
+                students = studentRepository.findByInstitutionIdAndNameLikeKeyword(institutionId, "%" + names[0] + "%",
+                    "%" + names[0] + "%", PageRequest.of(pageNumber, pageSize, Direction.ASC, "firstName"));
+            } else {
+                students = studentRepository.findByInstitutionIdAndNameLikeKeyword2(institutionId, "%" + names[0] + "%",
+                    "%" + names[1] + "%", PageRequest.of(pageNumber, pageSize, Direction.ASC, "firstName"));
+            }
+        }
 
         return students.map(s -> {
             StudentVo vo = new StudentVo();

@@ -18,6 +18,11 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Page<Student> findByInstitutionId(Long institutionId, Pageable page);
 
+    @Query("from Student s where s.institution.id = :institutionId and (lower(s.firstName) like lower(:firstName) or lower(s.lastName) like lower(:lastName))")
+    Page<Student> findByInstitutionIdAndNameLikeKeyword(Long institutionId, String firstName, String lastName, Pageable page);
+    @Query("from Student s where s.institution.id = :institutionId and (lower(s.firstName) like lower(:firstName) and lower(s.lastName) like lower(:lastName))")
+    Page<Student> findByInstitutionIdAndNameLikeKeyword2(Long institutionId, String firstName, String lastName, Pageable page);
+
     Student findByUserId(Long userId);
 
     @Query("select sum(s.credits) from Student s where s.institution.id=:institutionId")

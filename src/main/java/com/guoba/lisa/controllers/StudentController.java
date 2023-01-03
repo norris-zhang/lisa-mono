@@ -10,6 +10,7 @@ import com.guoba.lisa.dtos.StudentWorkVo;
 import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.web.models.AddStudent;
 import com.guoba.lisa.web.models.AddTopup;
+import com.guoba.lisa.web.models.StudentSearchModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.ZonedDateTime;
@@ -42,11 +42,12 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping(path = "/students")
-    public String listStudents(@RequestParam(required = false, defaultValue = "0") Integer page, Authentication auth,
-                               Model model) {
+    public String listStudents(@ModelAttribute StudentSearchModel searchModel, Authentication auth, Model model) {
         AuthUser authUser = (AuthUser)auth.getPrincipal();
-        Page<StudentVo> students = studentService.getInstitutionStudents(authUser.getInstitutionId(), page, pageSize);
+        Page<StudentVo> students = studentService.getInstitutionStudents(authUser.getInstitutionId(),
+            searchModel.getPage(), pageSize, searchModel.getKeyword());
         model.addAttribute("students", students);
+        model.addAttribute("searchModel", searchModel);
         return "students/list";
     }
 
