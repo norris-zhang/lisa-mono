@@ -97,6 +97,7 @@
 <body class="text-center">
 <main class="form-signin w-100 m-auto">
     <form th:action="@{/login}" method="post">
+        <h1 class="h3 mb-3 fw-normal" th:text="${institutionText}">Please sign in</h1>
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
         <div th:if="${param.error}" style="color: red;">
             Invalid username and password.</div>
