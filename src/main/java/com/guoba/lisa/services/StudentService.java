@@ -78,8 +78,8 @@ public class StudentService {
         });
     }
 
-    public List<Student> findStudentsOutOfClass(Long classId) {
-        List<Student> students = studentRepository.findStudentsOutOfClass(classId);
+    public List<Student> findStudentsOutOfClass(Long classId, Long institutionId) {
+        List<Student> students = studentRepository.findStudentsOutOfClass(classId, institutionId);
         students.forEach(s -> {
             if (!Hibernate.isInitialized(s.getClasses())) {
                 Hibernate.initialize(s.getClasses());

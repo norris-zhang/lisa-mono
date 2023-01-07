@@ -13,8 +13,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByClassesId(Long classId);
 
     @Query(nativeQuery = true,
-        value = "select s.* from student s where not exists (select 1 from student_class sc where sc.class_id=:classId and sc.student_id=s.id)")
-    List<Student> findStudentsOutOfClass(Long classId);
+        value = "select s.* from student s where s.institution_id=:institutionId and not exists (select 1 from student_class sc where sc.class_id=:classId and sc.student_id=s.id)")
+    List<Student> findStudentsOutOfClass(Long classId, Long institutionId);
 
     Page<Student> findByInstitutionId(Long institutionId, Pageable page);
 

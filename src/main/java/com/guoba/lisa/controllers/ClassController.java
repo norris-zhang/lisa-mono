@@ -74,8 +74,16 @@ public class ClassController {
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping(path = "/lclass/students")
-    public String classStudents(Long classId, Model model) {
+    public String classStudents(Long classId, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
         LisaClass lisaClass = classService.findClassById(classId);
+
+        if (!lisaClass.getInstitution().getId().equals(authUser.getInstitutionId())) {
+            model.addAttribute("errorMsg", "Class not found.");
+            model.addAttribute("gobackurl", "/classes");
+            return "404";
+        }
+
         model.addAttribute("classInfo", deriveClassInfo(lisaClass));
         model.addAttribute("classId", classId);
 
@@ -86,12 +94,19 @@ public class ClassController {
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping(path = "/lclass/addstu")
-    public String addClassStudent(Long classId, Model model) {
+    public String addClassStudent(Long classId, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+
         LisaClass lisaClass = classService.findClassById(classId);
+        if (!lisaClass.getInstitution().getId().equals(authUser.getInstitutionId())) {
+            model.addAttribute("errorMsg", "Class not found.");
+            model.addAttribute("gobackurl", "/classes");
+            return "404";
+        }
         model.addAttribute("classInfo", deriveClassInfo(lisaClass));
         model.addAttribute("classId", classId);
 
-        List<Student> candidateStudents = studentService.findStudentsOutOfClass(classId);
+        List<Student> candidateStudents = studentService.findStudentsOutOfClass(classId, authUser.getInstitutionId());
         List<StudentMultipleSelectVo> voList = new ArrayList<>();
         candidateStudents.forEach(s -> voList.add(studentToMultipleSelectVo(s)));
         model.addAttribute("candidateStudents", voList);
