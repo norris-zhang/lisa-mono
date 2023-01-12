@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(~{::title}, ~{}, ~{})}">
+    <title>Students</title>
+</head>
+<body>
+<main>
+    <nav th:replace="~{fragments :: navbar('all-students')}"></nav>
+    <section class="container-md">
+        <h1>Roll History</h1>
+
+        <div class="container-fluid">
+            <form class="d-flex" role="search" th:action="@{|/student/roll/history/${stuId}|}" method="get" id="searchForm">
+                <input type="hidden" name="page" value="0" id="pageInput">
+            </form>
+        </div>
+
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Student</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Present</th>
+                    <th scope="col">Credit Redeemed?</th>
+                    <th scope="col"> </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="vo : ${rollHistoryVos}">
+                    <td th:text="${vo.studentName}">Dongchen Zhang</td>
+                    <td th:text="${vo.className}">周六1.30-2.30</td>
+                    <td th:text="${vo.classDate}">2022-09-18</td>
+                    <td th:text="${vo.isPresent ? '&#9989;' : '&#10060;'}"></td>
+                    <td th:text="${vo.creditRedeemed}">1</td>
+                    <td> </td>
+                </tr>
+                </tbody>
+            </table>
+            <th:block th:replace="~{fragments :: pagination(${rollHistoryVos}, 'searchForm', 'pageInput')}"></th:block>
+        </div>
+    </section>
+</main>
+<th:block th:replace="~{fragments :: common_scripts}"></th:block>
+</body>
+</html>

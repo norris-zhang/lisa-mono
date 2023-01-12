@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -129,5 +130,14 @@ public class RollController {
         Page<RollHistoryVo> rollHistoryVos = rollService.getRollForClassAndStudent(defaultIfBlank(classKeyword, null), defaultIfBlank(stuKeyword, null), page, pageSize);
         model.addAttribute("rollHistoryVos", rollHistoryVos);
         return "roll/history";
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping(path = "/student/roll/history/{stuId}")
+    public String studentRollHistory(@PathVariable Long stuId, @RequestParam(defaultValue = "0") Integer page, Model model) {
+        model.addAttribute("stuId", stuId);
+        Page<RollHistoryVo> rollHistoryVos = rollService.getRollForStudent(stuId, page, pageSize);
+        model.addAttribute("rollHistoryVos", rollHistoryVos);
+        return "roll/history-stu";
     }
 }

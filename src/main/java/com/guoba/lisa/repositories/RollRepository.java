@@ -2,10 +2,9 @@ package com.guoba.lisa.repositories;
 
 import com.guoba.lisa.datamodel.Roll;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +19,6 @@ public interface RollRepository extends JpaRepository<Roll, Long>, RollRepositor
 
     List<Roll> findByClassDateBetweenAndClazzInstitutionId(LocalDate startDate, LocalDate endDate, Long institutionId);
 
-//    @Query("from Roll r where (1=:allClasses or r.clazz.id=:classId) and (1=:allStudents or r.student.id=:stuId) and r.student.institution.id=:institutionId and r.clazz.institution.id=:institutionId")
-//    Page<Roll> findByClazzIdAndStudentId(Long classId, Long stuId, Long institutionId, int allClasses, int allStudents, PageRequest page);
+    Page<Roll> findByStudentIdAndStudentInstitutionId(Long stuId, Long institutionId, Pageable page);
+
 }

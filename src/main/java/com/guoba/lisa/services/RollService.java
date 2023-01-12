@@ -14,8 +14,6 @@ import com.guoba.lisa.repositories.StudentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -173,6 +171,16 @@ public class RollService {
     public Page<RollHistoryVo> getRollForClassAndStudent(String classKeyword, String stuKeyword, int pageNumber, int pageSize) {
         Page<Roll> rollList = rollRepository.findByClazzKeywordAndStudentKeyword(classKeyword, stuKeyword,
             PageRequest.of(pageNumber, pageSize, Sort.by(desc("classDate"), desc("inputDate"))));
+        return mapRollToRollHistoryVo(rollList);
+    }
+
+    public Page<RollHistoryVo> getRollForStudent(Long stuId, Integer page, Integer pageSize) {
+        Page<Roll> rollList = rollRepository.findByStudentIdAndStudentInstitutionId(stuId, institutionId(),
+            PageRequest.of(page, pageSize, Sort.by(desc("classDate"), desc("inputDate"))));
+        return mapRollToRollHistoryVo(rollList);
+    }
+
+    private Page<RollHistoryVo> mapRollToRollHistoryVo(Page<Roll> rollList) {
         return rollList.map(r -> RollHistoryVo.builder()
             .studentName(r.getStudent().getFirstName() + " " + r.getStudent().getLastName())
             .className(r.getClazz().getName())
