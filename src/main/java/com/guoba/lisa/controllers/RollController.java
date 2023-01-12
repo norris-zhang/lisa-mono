@@ -5,13 +5,17 @@ import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.RollCallVo;
+import com.guoba.lisa.dtos.RollHistoryVo;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.ClassService;
 import com.guoba.lisa.services.RollService;
 import com.guoba.lisa.web.models.RollCall;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,12 +36,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class RollController {
     private final Logger logger = LoggerFactory.getLogger(RollController.class);
+
+    @Value("${page.size.default}")
+    private Integer pageSize;
     private final RollService rollService;
     private final ClassService classService;
 
@@ -111,5 +119,15 @@ public class RollController {
             redirectModel.addFlashAttribute("errorMsg", e.getMessage());
             return "redirect:/roll/catchup?classId=" + rollCall.getClassId();
         }
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping(path = "/roll/history")
+    public String rollHistory(@RequestParam(required = false) String classKeyword, @RequestParam(required = false) String stuKeyword, @RequestParam(defaultValue = "0") Integer page, Model model) {
+        model.addAttribute("classKeyword", classKeyword);
+        model.addAttribute("stuKeyword", stuKeyword);
+        Page<RollHistoryVo> rollHistoryVos = rollService.getRollForClassAndStudent(defaultIfBlank(classKeyword, null), defaultIfBlank(stuKeyword, null), page, pageSize);
+        model.addAttribute("rollHistoryVos", rollHistoryVos);
+        return "roll/history";
     }
 }

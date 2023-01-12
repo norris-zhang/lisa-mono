@@ -4,13 +4,18 @@ import com.guoba.lisa.datamodel.LisaClass;
 import com.guoba.lisa.datamodel.Roll;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.RollCallVo;
+import com.guoba.lisa.dtos.RollHistoryVo;
 import com.guoba.lisa.dtos.RollVo;
 import com.guoba.lisa.dtos.RollVo.RollVoItem;
 import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.repositories.LisaClassRepository;
 import com.guoba.lisa.repositories.RollRepository;
 import com.guoba.lisa.repositories.StudentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.guoba.lisa.helpers.AuthHelper.institutionId;
 import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.data.domain.Sort.Direction.DESC;
+import static org.springframework.data.domain.Sort.Order.desc;
 
 @Service
 @Transactional(readOnly = true)
@@ -163,4 +170,15 @@ public class RollService {
         return roll;
     }
 
+    public Page<RollHistoryVo> getRollForClassAndStudent(String classKeyword, String stuKeyword, int pageNumber, int pageSize) {
+        Page<Roll> rollList = rollRepository.findByClazzKeywordAndStudentKeyword(classKeyword, stuKeyword,
+            PageRequest.of(pageNumber, pageSize, Sort.by(desc("classDate"), desc("inputDate"))));
+        return rollList.map(r -> RollHistoryVo.builder()
+            .studentName(r.getStudent().getFirstName() + " " + r.getStudent().getLastName())
+            .className(r.getClazz().getName())
+            .classDate(r.getClassDate())
+            .isPresent("Y".equals(r.getIsPresent()))
+            .creditRedeemed(r.getCreditRedeemed())
+            .build());
+    }
 }
