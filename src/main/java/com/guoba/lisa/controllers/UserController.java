@@ -42,7 +42,14 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public String doChangePassword(ChangePassword form) {
-        return "redirect:/";
+    public String doChangePassword(ChangePassword form, Model model) {
+        try {
+            userService.changePassword(form.getOldPassword(), form.getNewPassword());
+            return "redirect:/logout";
+        } catch (Exception e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/");
+            return "404";
+        }
     }
 }
