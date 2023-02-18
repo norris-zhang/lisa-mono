@@ -20,8 +20,6 @@ insert into "user" ("username", "password", "institution_id", "role") values ('l
 insert into "user" ("username", "password", "institution_id", "role") values ('dongchenz', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'STUDENT');
 insert into "user" ("username", "password", "institution_id", "role") values ('qiancheng', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='QianCheng'), 'TEACHER');
 insert into "user" ("username", "password", "institution_id", "role") values ('banmuyuan', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='BanMuYuan'), 'TEACHER');
-insert into "user" ("username", "password", "institution_id", "role") values ('dongchenz', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='QianCheng'), 'STUDENT');
-insert into "user" ("username", "password", "institution_id", "role") values ('dongchenz', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='BanMuYuan'), 'STUDENT');
 
 create table "lisa_class" (
     "id" bigserial primary key,
@@ -37,15 +35,6 @@ create table "lisa_class" (
 
 insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六1.30-2.30', 'SATURDAY', '13:30', '14:30');
 insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='LisaArt'), '周六3.00-4.00', 'SATURDAY', '15:00', '16:00');
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time, session_credits) values ((select "id" from "institution" where "name"='LisaArt'), '周二3.30-5.30', 'TUESDAY', '15:30', '17:30', 2);
-
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='QianCheng'), '周六1.30-2.30', 'SATURDAY', '13:30', '14:30');
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='QianCheng'), '周六3.00-4.00', 'SATURDAY', '15:00', '16:00');
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time, session_credits) values ((select "id" from "institution" where "name"='QianCheng'), '周二3.30-5.30', 'TUESDAY', '15:30', '17:30', 2);
-
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='BanMuYuan'), '周六1.30-2.30', 'SATURDAY', '13:30', '14:30');
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time) values ((select "id" from "institution" where "name"='BanMuYuan'), '周六3.00-4.00', 'SATURDAY', '15:00', '16:00');
-insert into "lisa_class" (institution_id, name, weekday, start_time, end_time, session_credits) values ((select "id" from "institution" where "name"='BanMuYuan'), '周二3.30-5.30', 'TUESDAY', '15:30', '17:30', 2);
 
 create table "student" (
     "id" bigserial primary key,
@@ -63,12 +52,6 @@ create table "student" (
 insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "enrolled_on", "credits", "user_id") values (1, 'Dongchen', 'Zhang', '2014-03-28', '2018-07-01', 4, 2);
 insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongyu', 'Zhang', '2014-03-28', 4);
 
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "enrolled_on", "credits", "user_id") values (2, 'Dongchen', 'Zhang', '2014-03-28', '2018-07-01', 4, 5);
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (2, 'Dongyu', 'Zhang', '2014-03-28', 4);
-
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "enrolled_on", "credits", "user_id") values (3, 'Dongchen', 'Zhang', '2014-03-28', '2018-07-01', 4, 6);
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (3, 'Dongyu', 'Zhang', '2014-03-28', 4);
-
 create table "student_class" (
     "id" bigserial primary key,
     "class_id" bigint not null,
@@ -79,12 +62,6 @@ create table "student_class" (
 
 insert into "student_class" ("class_id", "student_id") values (1, 1);
 insert into "student_class" ("class_id", "student_id") values (1, 2);
-
-insert into "student_class" ("class_id", "student_id") values (4, 3);
-insert into "student_class" ("class_id", "student_id") values (4, 4);
-
-insert into "student_class" ("class_id", "student_id") values (7, 5);
-insert into "student_class" ("class_id", "student_id") values (7, 6);
 
 create table "parent" (
     "id" bigserial primary key,
@@ -139,54 +116,6 @@ create table "roll" (
     constraint fk_student_id foreign key ("student_id") references "student"("id"),
     constraint fk_class_id foreign key ("class_id") references "lisa_class"("id")
 );
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(1, 1, '2022-07-30', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(1, 1, '2022-08-06', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(1, 1, '2022-08-13', now(), 'N', 0);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(1, 1, '2022-08-20', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(1, 1, '2022-08-27', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(1, 1, '2022-09-03', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(2, 1, '2022-07-30', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(2, 1, '2022-08-06', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(2, 1, '2022-08-13', now(), 'N', 0);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(2, 1, '2022-08-20', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(2, 1, '2022-08-27', now(), 'Y', 1);
-
-INSERT INTO public.roll
-(student_id, class_id, class_date, input_date, is_present, credit_redeemed)
-VALUES(2, 1, '2022-09-03', now(), 'Y', 1);
 
 create table "renew" (
     "id" bigserial primary key,
