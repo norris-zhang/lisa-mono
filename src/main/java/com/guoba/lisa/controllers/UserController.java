@@ -5,6 +5,7 @@ import com.guoba.lisa.services.UserService;
 import com.guoba.lisa.web.models.ChangePassword;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,5 +52,11 @@ public class UserController {
             model.addAttribute("gobackurl", "/");
             return "404";
         }
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping("/create-user")
+    public String createUser(Long stuId, Authentication auth, Model model) {
+        return "/";
     }
 }

@@ -1,6 +1,7 @@
 package com.guoba.lisa.services;
 
 import com.guoba.lisa.datamodel.LisaClass;
+import com.guoba.lisa.datamodel.LisaUser;
 import com.guoba.lisa.datamodel.Parent;
 import com.guoba.lisa.datamodel.ParentStudent;
 import com.guoba.lisa.datamodel.Renew;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,6 +76,7 @@ public class StudentService {
             }
             vo.setClasses(s.getClasses().stream().map(LisaClass::getName).collect(Collectors.joining(" | ")));
             vo.setEnrolledOn(s.getEnrolledOn());
+            vo.setUserId(Optional.ofNullable(s.getUser()).map(LisaUser::getId).orElse(null));
             return vo;
         });
     }

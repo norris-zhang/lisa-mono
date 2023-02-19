@@ -12,4 +12,5 @@ public class StudentVo {
     private Integer credits;
     private String classes;
     private LocalDate enrolledOn;
+    private Long userId;
 }
