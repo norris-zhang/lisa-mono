@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>Classes</title>
+</head>
+<body>
+<main>
+    <nav th:replace="fragments :: navbar('all-students')"></nav>
+
+    <section class="container-md">
+        <h1 th:text="|Create a user login for ${student.firstName} ${student.lastName}|"></h1>
+        <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
+        <form action="#" th:action="@{/classes/add}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="stuId" th:value="${stuId}">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" th:value="${suggestedUsername}" maxlength="255" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter a class name.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="text" class="form-control" id="password" name="password" th:value="${suggestedPassword}" maxlength="255" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please enter a class name.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+<script th:src="@{/js/form-validation.js}"></script>
+</body>
+</html>

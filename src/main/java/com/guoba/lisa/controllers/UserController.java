@@ -1,6 +1,10 @@
 package com.guoba.lisa.controllers;
 
+import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.datamodel.LisaUser;
+import com.guoba.lisa.datamodel.Student;
+import com.guoba.lisa.helpers.WordHelper;
+import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.services.UserService;
 import com.guoba.lisa.web.models.ChangePassword;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,9 +24,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 public class UserController {
     private final UserService userService;
+    private final StudentService studentService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, StudentService studentService) {
         this.userService = userService;
+        this.studentService = studentService;
     }
 
     @RequestMapping(path = "/user/list", method = GET)
@@ -57,6 +63,18 @@ public class UserController {
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping("/create-user")
     public String createUser(Long stuId, Authentication auth, Model model) {
-        return "/";
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+        model.addAttribute("stuId", stuId);
+        try {
+            Student student = studentService.getStudentById(stuId, authUser.getInstitutionId());
+            model.addAttribute("suggestedUsername", studentService.suggestUsername(student, authUser.getInstitutionId()));
+            model.addAttribute("suggestedPassword", WordHelper.randomWord());
+            model.addAttribute("student", student);
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/");
+            return "404";
+        }
+        return "user/create-user";
     }
 }

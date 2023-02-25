@@ -14,6 +14,7 @@ import com.guoba.lisa.repositories.ParentRepository;
 import com.guoba.lisa.repositories.ParentStudentRepository;
 import com.guoba.lisa.repositories.RenewRepository;
 import com.guoba.lisa.repositories.StudentRepository;
+import com.guoba.lisa.repositories.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,13 +38,16 @@ public class StudentService {
     private final ParentRepository parentRepository;
     private final ParentStudentRepository psRepository;
     private final RenewRepository renewRepository;
+    private final UserRepository userRepository;
 
     public StudentService(StudentRepository studentRepository, ParentRepository parentRepository,
-                          ParentStudentRepository psRepository, RenewRepository renewRepository) {
+                          ParentStudentRepository psRepository, RenewRepository renewRepository,
+                          UserRepository userRepository) {
         this.studentRepository = studentRepository;
         this.parentRepository = parentRepository;
         this.psRepository = psRepository;
         this.renewRepository = renewRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Student> getClassStudents(Long classId) {
@@ -181,5 +186,36 @@ public class StudentService {
         renewRepository.save(renew);
         student.setCredits(newBalance);
         studentRepository.save(student);
+    }
+
+    public String suggestUsername(Student student, Long institutionId) {
+        StringBuilder sb = new StringBuilder(student.getFirstName());
+        if (isNotBlank(student.getLastName())) {
+            sb.append(student.getLastName().charAt(0));
+        }
+        String suggestedUsername = sb.toString().toLowerCase();
+        List<String> duplicateUsers = userRepository.findByFuzzyUsernameAndInstitutionId(suggestedUsername + "%", institutionId);
+        if (duplicateUsers.isEmpty()) {
+            return suggestedUsername;
+        }
+        int maxNum = 1;
+        boolean isDup = false;
+        for (String dup : duplicateUsers) {
+            if (dup.equalsIgnoreCase(suggestedUsername)) {
+                isDup = true;
+            }
+            String num = dup.replace(suggestedUsername, "");
+            if (num.matches("\\d+")) {
+                int theNum = Integer.parseInt(num);
+                if (theNum > maxNum) {
+                    maxNum = theNum;
+                }
+            }
+        }
+        if (!isDup) {
+            return suggestedUsername;
+        } else {
+            return suggestedUsername + (maxNum + 1);
+        }
     }
 }
