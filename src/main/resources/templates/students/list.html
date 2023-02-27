@@ -20,41 +20,43 @@
         </div>
 
         <div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Date of Birth</th>
-                    <th scope="col">Credits</th>
-                    <th scope="col">Classes</th>
-                    <th scope="col">Enrolment Date</th>
-                    <th scope="col"> </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="s : ${students}">
-                    <td th:text="${s.name}">Dongchen Zhang</td>
-                    <td th:text="${s.dateOfBirth}">2014-03-28</td>
-                    <td th:text="${s.credits}">2</td>
-                    <td th:text="${s.classes}">周六1.30-2.30</td>
-                    <td th:text="${s.enrolledOn}">2022-09-18</td>
-                    <td>
-                        <a href="#" class="btn btn-link" th:href="@{/student/topup(stuId=${s.id})}">Top-up</a>
-                        <a href="#" class="btn btn-link" th:href="@{|/student/${s.id}|}">View Detail</a>
-                        <a href="#" class="btn btn-link" th:href="@{|/student/roll/history/${s.id}|}">Roll History</a>
-                        <a href="#" class="btn btn-link" th:if="${s.userId == null}" th:href="@{/create-user(stuId=${s.id})}">Create User</a>
-                        <a href="#" class="btn btn-link">Update</a>
-                        <a href="#" class="btn btn-link">Delete</a>
-                    </td>
-                </tr>
-                <tr th:remove="all">
-                    <td>周六下午1.30</td>
-                    <td>Saturday</td>
-                    <td>1.30pm</td>
-                    <td>2.30pm</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table text-nowrap table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Date of Birth</th>
+                        <th scope="col">Credits</th>
+                        <th scope="col">Classes</th>
+                        <th scope="col">Enrolment Date</th>
+                        <th scope="col"> </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="s : ${students}">
+                        <td th:text="${s.name}">Dongchen Zhang</td>
+                        <td th:text="${s.dateOfBirth}">2014-03-28</td>
+                        <td th:text="${s.credits}">2</td>
+                        <td th:text="${s.classes}">周六1.30-2.30</td>
+                        <td th:text="${s.enrolledOn}">2022-09-18</td>
+                        <td>
+                            <a href="#" class="btn btn-link" th:href="@{/student/topup(stuId=${s.id})}">Top-up</a>
+                            <a href="#" class="btn btn-link" th:href="@{|/student/${s.id}|}">View Detail</a>
+                            <a href="#" class="btn btn-link" th:href="@{|/student/roll/history/${s.id}|}">Roll History</a>
+                            <a href="#" class="btn btn-link" th:if="${s.userId == null}" th:href="@{/create-user(stuId=${s.id})}">Create User</a>
+                            <a href="#" class="btn btn-link">Update</a>
+                            <a href="#" class="btn btn-link">Delete</a>
+                        </td>
+                    </tr>
+                    <tr th:remove="all">
+                        <td>周六下午1.30</td>
+                        <td>Saturday</td>
+                        <td>1.30pm</td>
+                        <td>2.30pm</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     <li class="page-item" th:classappend="${students.first ? 'disabled' : ''}">
