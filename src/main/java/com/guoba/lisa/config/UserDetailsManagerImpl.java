@@ -17,11 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserDetailsManagerImpl implements UserDetailsManager {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserDetailsManagerImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserDetailsManagerImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -54,7 +52,7 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String[] usernameInstitution = username.split("@");
         LisaUser lisaUser = userRepository.findByUsernameAndInstitutionId(
-                usernameInstitution[0], Long.valueOf(usernameInstitution[1]));
+                usernameInstitution[0].toLowerCase(), Long.valueOf(usernameInstitution[1]));
         if (lisaUser == null) {
             throw new UsernameNotFoundException("Unknown username: " + username);
         }

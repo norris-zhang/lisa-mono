@@ -10,7 +10,7 @@
     <section class="container-md">
         <h1 th:text="|Create a user login for ${student.firstName} ${student.lastName}|"></h1>
         <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
-        <form action="#" th:action="@{/classes/add}" method="post" class="needs-validation" novalidate>
+        <form action="#" th:action="@{/create-user}" method="post" class="needs-validation" novalidate>
             <input type="hidden" name="stuId" th:value="${stuId}">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
@@ -32,11 +32,25 @@
                     Please enter a class name.
                 </div>
             </div>
+            <div class="mb-3">
+                <p>NOTE: It's recommended that you <button type="button" class="btn btn-success" onclick="copyInvite()">COPY INVITE</button>, because the password will not be retrievable once you submit the form.</p>
+                <p id="invite-text"></p>
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </section>
 </main>
 <th:block th:replace="fragments :: common_scripts"></th:block>
 <script th:src="@{/js/form-validation.js}"></script>
+<script>
+    function copyInvite() {
+      const url = window.location.hostname;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      let inviteContent = `You're invited to log into ${url} with username ${username} and password ${password}. Please change password once you are successfully logged in.`;
+      $('#invite-text').html('The copied invite is: <b>' + inviteContent + '</b>');
+      navigator.clipboard.writeText(inviteContent);
+    }
+</script>
 </body>
 </html>

@@ -7,6 +7,7 @@ import com.guoba.lisa.helpers.WordHelper;
 import com.guoba.lisa.services.StudentService;
 import com.guoba.lisa.services.UserService;
 import com.guoba.lisa.web.models.ChangePassword;
+import com.guoba.lisa.web.models.CreateUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -76,5 +78,23 @@ public class UserController {
             return "404";
         }
         return "user/create-user";
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @PostMapping("/create-user")
+    public String doCreateUser(@ModelAttribute CreateUser studentUser, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+        try {
+            userService.createStudentUser(studentUser, authUser.getInstitutionId());
+            return "redirect:/students";
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/");
+            return "404";
+        } catch (Exception e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/students");
+            return "500";
+        }
     }
 }
