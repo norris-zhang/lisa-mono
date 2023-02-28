@@ -114,7 +114,7 @@ public class RollController {
         try {
             rollService.rollCall(rollCall.getStuId(), rollCall.getClassId(), rollCall.getRollDate(),
                 "PRESENT".equals(rollCall.getStatus()), rollCall.getIsDeduct());
-            return "redirect:/students/history?stuId=" + rollCall.getStuId();
+            return "redirect:/roll";
         } catch (RollException e) {
             redirectModel.addFlashAttribute("rollCallModel", rollCall);
             redirectModel.addFlashAttribute("errorMsg", e.getMessage());
