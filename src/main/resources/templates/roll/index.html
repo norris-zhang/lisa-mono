@@ -148,85 +148,88 @@
                 Keep the current credits without deduction?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-btn-name="deduct">Deduct</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-btn-name="keepCredit">Keep Credits</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-btn-name="deduct" onclick="return deductCredit()">Deduct</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-btn-name="keepCredit" onclick="return keepCredit()">Keep Credits</button>
             </div>
         </div>
     </div>
 </div>
 <th:block th:replace="~{fragments :: common_scripts}"></th:block>
 <script th:inline="javascript">
-    function markPresent(linkTarget) {
-        if (!window.confirm('Confirm?')) {
-            return false;
-        }
-        const url = '[(@{/roll/call})]';
-        $.post(
-            url,
-            {
-                stuId: linkTarget.dataset.stuId,
-                classId: linkTarget.dataset.classId,
-                rollDate: linkTarget.dataset.rollDate,
-                status: 'PRESENT',
-                v: new Date().getDate()
-            },
-            json => {
-                if (json.status === 'ok') {
-                    $(linkTarget).parent().html('&#9989;');
-                    $('#stu_credit_4_' + json.stuId).html(json.credit);
-                } else {
-                    alert(json.message);
-                }
-            },
-            'json');
-        return false;
+  let linkTarget = null;
+  function markPresent(linkTarget) {
+    if (!window.confirm('Confirm?')) {
+      return false;
     }
+    const url = '[(@{/roll/call})]';
+    $.post(
+        url,
+        {
+          stuId: linkTarget.dataset.stuId,
+          classId: linkTarget.dataset.classId,
+          rollDate: linkTarget.dataset.rollDate,
+          status: 'PRESENT',
+          v: new Date().getDate()
+        },
+        json => {
+          if (json.status === 'ok') {
+            $(linkTarget).parent().html('&#9989;');
+            $('#stu_credit_4_' + json.stuId).html(json.credit);
+          } else {
+            alert(json.message);
+          }
+        },
+        'json');
+    return false;
+  }
 
-    function markAbsent(linkTarget) {
-      alert('Norris - before confirmBox');
-        $('#confirmBox').one('hide.bs.modal', function (e) {
-          alert('Norris - got event');
-            if (!$(document.activeElement).data('btnName')) {
-              alert(`Norris - document.activeElement is ${JSON.stringify($(document.activeElement))}`);
-              alert('Norris - no btnName, return');
-                return;
-            }
-            const url = '[(@{/roll/call})]';
-          alert(`Norris - url is ${url}`);
-            $.post(
-                url,
-                {
-                    stuId: linkTarget.dataset.stuId,
-                    classId: linkTarget.dataset.classId,
-                    rollDate: linkTarget.dataset.rollDate,
-                    status: 'ABSENT',
-                    isDeduct: $(document.activeElement).data('btnName') === 'deduct',
-                    v: new Date().getDate()
-                },
-                json => {
-                    if (json.status === 'ok') {
-                      alert('Norris - json status ok');
-                        const icon = json.isPresent === 'Y' ? '&#9989;' : '&#10060;'
-                        $(linkTarget).parent().html(icon);
-                      $('#stu_credit_4_' + json.stuId).html(json.credit);
-                    } else {
-                      alert('Norris - json status not ok');
-                        alert(json.message);
-                    }
-                },
-                'json');
-        });
-      alert('Norris - confirmBox modal show');
-        $('#confirmBox').modal('show');
-      alert('Norris - return false');
+  function markAbsent(theLinkTarget) {
+    linkTarget = theLinkTarget
 
-        return false;
-    }
-    function gotoCatchup() {
-      const classId = $("#clazz").val()
-      const url = '[(@{/roll/catchup})]';
-      window.location.href = `${url}?classId=${classId}`;
-    }
+    $('#confirmBox').modal('show');
+
+    return false;
+  }
+
+  function deductCredit() {
+    sendRollRequest(true);
+    return true;
+  }
+  function keepCredit() {
+    sendRollRequest(false);
+    return true;
+  }
+
+  function sendRollRequest(isDeduct) {
+    const url = '[(@{/roll/call})]';
+    $.post(
+        url,
+        {
+          stuId: linkTarget.dataset.stuId,
+          classId: linkTarget.dataset.classId,
+          rollDate: linkTarget.dataset.rollDate,
+          status: 'ABSENT',
+          isDeduct: isDeduct,
+          v: new Date().getDate()
+        },
+        json => {
+          if (json.status === 'ok') {
+            const icon = json.isPresent === 'Y' ? '&#9989;' : '&#10060;'
+            $(linkTarget).parent().html(icon);
+            $('#stu_credit_4_' + json.stuId).html(json.credit);
+          } else {
+            alert(json.message);
+          }
+        },
+        'json'
+    );
+  }
+
+  function gotoCatchup() {
+    const classId = $("#clazz").val()
+    const url = '[(@{/roll/catchup})]';
+    window.location.href = `${url}?classId=${classId}`;
+  }
 </script>
 </body>
 </html>

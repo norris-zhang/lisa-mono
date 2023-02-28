@@ -22,9 +22,7 @@ public class SecurityConfiguration {
                                            @Autowired AuthenticationProvider authProvider,
                                            @Autowired UserDetailsService userDetailsService) throws Exception {
         http
-                .authorizeHttpRequests()
-                .anyRequest().authenticated()
-                .and()
+                .authorizeHttpRequests(authz -> authz.requestMatchers("/actuator/shutdown").hasRole("ADMIN").anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/")

@@ -17,9 +17,8 @@
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
-
-        <div>
-            <table class="table">
+        <div class="table-responsive">
+            <table class="table text-nowrap table-striped">
                 <thead>
                 <tr>
                     <th scope="col">Student</th>
@@ -36,11 +35,13 @@
                     <td th:text="${vo.className}">周六1.30-2.30</td>
                     <td th:text="${vo.classDate}">2022-09-18</td>
                     <td th:text="${vo.isPresent ? '&#9989;' : '&#10060;'}"></td>
-                    <td th:text="${vo.creditRedeemed}">1</td>
+                    <td th:text="${vo.creditRedeemed == 1 ? 'Yes' : 'No'}">1</td>
                     <td> </td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div>
             <th:block th:replace="~{fragments :: pagination(${rollHistoryVos}, 'searchForm', 'pageInput')}"></th:block>
         </div>
     </section>
