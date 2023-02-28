@@ -183,11 +183,15 @@
     }
 
     function markAbsent(linkTarget) {
+      alert('Norris - before confirmBox');
         $('#confirmBox').one('hide.bs.modal', function (e) {
+          alert('Norris - got event');
             if (!$(document.activeElement).data('btnName')) {
+              alert('Norris - no btnName, return');
                 return;
             }
             const url = '[(@{/roll/call})]';
+          alert(`Norris - url is ${url}`);
             $.post(
                 url,
                 {
@@ -200,16 +204,20 @@
                 },
                 json => {
                     if (json.status === 'ok') {
+                      alert('Norris - json status ok');
                         const icon = json.isPresent === 'Y' ? '&#9989;' : '&#10060;'
                         $(linkTarget).parent().html(icon);
                       $('#stu_credit_4_' + json.stuId).html(json.credit);
                     } else {
+                      alert('Norris - json status not ok');
                         alert(json.message);
                     }
                 },
                 'json');
         });
+      alert('Norris - confirmBox modal show');
         $('#confirmBox').modal('show');
+      alert('Norris - return false');
 
         return false;
     }
