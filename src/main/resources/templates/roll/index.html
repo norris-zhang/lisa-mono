@@ -187,7 +187,7 @@
         $('#confirmBox').one('hide.bs.modal', function (e) {
           alert('Norris - got event');
             if (!$(document.activeElement).data('btnName')) {
-              alert(`Norris - document.activeElement is ${$(document.activeElement)}`)
+              alert(`Norris - document.activeElement is ${JSON.stringify($(document.activeElement))}`);
               alert('Norris - no btnName, return');
                 return;
             }
