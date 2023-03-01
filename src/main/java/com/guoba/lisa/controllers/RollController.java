@@ -11,7 +11,6 @@ import com.guoba.lisa.exceptions.RollException;
 import com.guoba.lisa.services.ClassService;
 import com.guoba.lisa.services.RollService;
 import com.guoba.lisa.web.models.RollCall;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,7 +59,6 @@ public class RollController {
     @RequestMapping(path = "/roll", method = {GET, POST})
     public String listClasses(@RequestParam(name = "classId", required = false) Long classId, Authentication auth, Model model) {
         AuthUser authUser = (AuthUser)auth.getPrincipal();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RollVo rollVo = rollService.getRollForClass(classId, authUser.getInstitutionId());
         model.addAttribute("rollVo", rollVo);
         return "roll/index";

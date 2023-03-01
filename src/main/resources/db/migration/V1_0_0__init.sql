@@ -20,6 +20,7 @@ insert into "user" ("username", "password", "institution_id", "role") values ('l
 insert into "user" ("username", "password", "institution_id", "role") values ('dongchenz', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'STUDENT');
 insert into "user" ("username", "password", "institution_id", "role") values ('qiancheng', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='QianCheng'), 'TEACHER');
 insert into "user" ("username", "password", "institution_id", "role") values ('banmuyuan', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='BanMuYuan'), 'TEACHER');
+insert into "user" ("username", "password", "institution_id", "role") values ('admin', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'ADMIN');
 
 create table "lisa_class" (
     "id" bigserial primary key,
@@ -49,8 +50,8 @@ create table "student" (
     constraint fk_stu_user_id foreign key ("user_id") references "user"("id")
 );
 
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "enrolled_on", "credits", "user_id") values (1, 'Dongchen', 'Zhang', '2014-03-28', '2018-07-01', 4, 2);
-insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongyu', 'Zhang', '2014-03-28', 4);
+insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "enrolled_on", "credits", "user_id") values (1, 'Dongchen', 'Zhang', '2014-03-28', '2018-07-01', 1, 2);
+insert into "student" (institution_id, "first_name", "last_name", "date_of_birth", "credits") values (1, 'Dongyu', 'Zhang', '2014-03-28', 1);
 
 create table "student_class" (
     "id" bigserial primary key,
@@ -114,7 +115,8 @@ create table "roll" (
     "is_present" char(1) not null,
     "credit_redeemed" integer not null default 1,
     constraint fk_student_id foreign key ("student_id") references "student"("id"),
-    constraint fk_class_id foreign key ("class_id") references "lisa_class"("id")
+    constraint fk_class_id foreign key ("class_id") references "lisa_class"("id"),
+    constraint unique_class_student_date unique ("student_id", "class_id", "class_date")
 );
 
 create table "renew" (

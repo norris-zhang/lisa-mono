@@ -24,10 +24,12 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.guoba.lisa.helpers.AuthHelper.institutionId;
 import static java.lang.Boolean.TRUE;
@@ -83,7 +85,7 @@ public class RollService {
         for (int i = 0; i < 10; i++) {
             vo.getDates().add(start.plusWeeks(i));
         }
-        for (Student stu : currentClass.getStudents()) {
+        currentClass.getStudents().forEach(stu -> {
             RollVoItem voItem = new RollVoItem();
             voItem.setStudentId(stu.getId());
             voItem.setName(stu.getFirstName() + (isBlank(stu.getLastName()) ? "" : " " + stu.getLastName()));
@@ -100,7 +102,9 @@ public class RollService {
             }
             voItem.setRollList(list);
             vo.getItems().add(voItem);
-        }
+        });
+
+        vo.setItems(vo.getItems().stream().sorted(Comparator.comparing(RollVoItem::getName)).collect(Collectors.toList()));
 
         return vo;
     }

@@ -49,6 +49,28 @@
       const password = document.getElementById('password').value;
       let inviteContent = `You're invited to log into ${url} with username ${username} and password ${password}. Please change password once you are successfully logged in.`;
       $('#invite-text').html('The copied invite is: <b>' + inviteContent + '</b>');
+
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(inviteContent) // write the text content to the clipboard using the Clipboard API
+            .then(() => {
+              alert("Text copied to clipboard!"); // display a message to the user
+            })
+            .catch(err => {
+              console.error('Could not copy text: ', err);
+            });
+      } else {
+        var dummy = document.createElement("textarea"); // create a dummy textarea element
+        document.body.appendChild(dummy); // append the dummy element to the document body
+        dummy.value = inviteContent; // set the value of the dummy element to the text content
+        dummy.select(); // select the text in the dummy element
+        document.execCommand("copy"); // copy the selected text to the clipboard
+        document.body.removeChild(dummy); // remove the dummy element from the document body
+        alert("Text copied to clipboard"); // display a message to the user
+      }
+
+
+
       navigator.clipboard.writeText(inviteContent);
     }
 </script>

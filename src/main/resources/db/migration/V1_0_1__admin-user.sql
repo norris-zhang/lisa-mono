@@ -1,1 +1,0 @@
-insert into "user" ("username", "password", "institution_id", "role") values ('admin', '{bcrypt}$2a$10$ssreL24b8qCncRyYnucjCOSEmqwLWPLowTL4gSUAiPsMyIMAtQ5Je', (select "id" from "institution" where "name"='LisaArt'), 'ADMIN');
