@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -116,6 +117,14 @@ public class RollController {
                 "PRESENT".equals(rollCall.getStatus()), rollCall.getIsDeduct());
             return "redirect:/roll";
         } catch (RollException e) {
+            redirectModel.addFlashAttribute("rollCallModel", rollCall);
+            redirectModel.addFlashAttribute("errorMsg", e.getMessage());
+            return "redirect:/roll/catchup?classId=" + rollCall.getClassId();
+        } catch (DataIntegrityViolationException e) {
+            redirectModel.addFlashAttribute("rollCallModel", rollCall);
+            redirectModel.addFlashAttribute("errorMsg", "Duplicate roll detected.");
+            return "redirect:/roll/catchup?classId=" + rollCall.getClassId();
+        } catch (Exception e) {
             redirectModel.addFlashAttribute("rollCallModel", rollCall);
             redirectModel.addFlashAttribute("errorMsg", e.getMessage());
             return "redirect:/roll/catchup?classId=" + rollCall.getClassId();
