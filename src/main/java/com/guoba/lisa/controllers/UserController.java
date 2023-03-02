@@ -97,4 +97,39 @@ public class UserController {
             return "500";
         }
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/reset-password")
+    public String resetPassword(Long stuId, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+        model.addAttribute("stuId", stuId);
+        try {
+            Student student = studentService.getStudentById(stuId, authUser.getInstitutionId());
+            model.addAttribute("suggestedPassword", WordHelper.randomWord());
+            model.addAttribute("student", student);
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/");
+            return "404";
+        }
+        return "user/reset-password";
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PostMapping("/reset-password")
+    public String doResetPassword(@ModelAttribute CreateUser studentUser, Authentication auth, Model model) {
+        AuthUser authUser = (AuthUser)auth.getPrincipal();
+        try {
+            userService.resetStudentPassword(studentUser, authUser.getInstitutionId());
+            return "redirect:/students";
+        } catch (IllegalAccessException e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/");
+            return "404";
+        } catch (Exception e) {
+            model.addAttribute("errorMsg", e.getMessage());
+            model.addAttribute("gobackurl", "/students");
+            return "500";
+        }
+    }
 }

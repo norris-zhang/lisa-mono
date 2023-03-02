@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -152,12 +153,20 @@ public class StudentService {
     }
 
     public Student getStudentById(Long stuId, Long institutionId) throws IllegalAccessException {
-        Student student = studentRepository.getReferenceById(stuId);
-        if (!student.getInstitution().getId().equals(institutionId)) {
-            throw new IllegalAccessException("Student not found.");
+        Optional<Student> stu = studentRepository.findById(stuId);
+        if (stu.isEmpty()) {
+            throw new IllegalAccessException("Student info not found.");
         }
+        Student student = stu.get();
+        if (!Objects.equals(student.getInstitution().getId(), institutionId)) {
+            throw new IllegalAccessException("Student info not found.");
+        }
+
         if (!Hibernate.isInitialized(student.getClasses())) {
             Hibernate.initialize(student.getClasses());
+        }
+        if (!Hibernate.isInitialized(student.getUser())) {
+            Hibernate.initialize(student.getUser());
         }
         return student;
     }

@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,11 +20,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final StudentRepository studentRepository;
+    private final StudentService studentService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, StudentRepository studentRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, StudentRepository studentRepository,
+                       StudentService studentService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
+        this.studentService = studentService;
     }
 
     public List<LisaUser> getAll() {
@@ -48,15 +49,7 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createStudentUser(CreateUser studentUser, Long institutionId) throws Exception {
-        Long stuId = studentUser.getStuId();
-        Optional<Student> stu = studentRepository.findById(stuId);
-        if (stu.isEmpty()) {
-            throw new IllegalAccessException("Student info not found.");
-        }
-        Student student = stu.get();
-        if (!Objects.equals(student.getInstitution().getId(), institutionId)) {
-            throw new IllegalAccessException("Student info not found.");
-        }
+        Student student = studentService.getStudentById(studentUser.getStuId(), institutionId);
 
         LisaUser existingUser = userRepository.findByUsernameAndInstitutionId(studentUser.getUsername(), institutionId);
         if (existingUser != null) {
@@ -72,6 +65,17 @@ public class UserService {
 
         student.setUser(user);
         studentRepository.save(student);
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void resetStudentPassword(CreateUser studentUser, Long institutionId) throws Exception {
+        Student student = studentService.getStudentById(studentUser.getStuId(), institutionId);
+
+        LisaUser user = userRepository.getReferenceById(student.getUser().getId());
+
+        user.setPassword(passwordEncoder.encode(studentUser.getPassword()));
+        userRepository.save(user);
 
     }
 }
