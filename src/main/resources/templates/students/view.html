@@ -38,7 +38,7 @@
             <div class="row">
                 <div class="col-12 col-md-4" th:each="work : ${studentWorkVo.works}">
                     <div>
-                        <img src="#" th:src="@{|/picture/${work.picId}|}" alt="demo" class="img-fluid">
+                        <img src="#" th:src="@{|/picture/${work.picId}|}" alt="demo" class="img-fluid" onclick="showModal(this.src)">
                     </div>
                     <div>
                         <p th:text="${work.title}"></p>
@@ -49,7 +49,25 @@
             </div>
         </div>
     </section>
+    <!-- Full screen modal -->
+    <div class="modal" tabindex="-1" id="fullScreenModal">
+        <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
+            <img src="" alt="" style="width: 100%;" id="fullScreenImg" onclick="hideModal()">
+        </div>
+    </div>
 </main>
 <th:block th:replace="~{fragments :: common_scripts}"></th:block>
+<script>
+  function showModal(picSrc) {
+    document.getElementById('fullScreenImg').src = picSrc;
+    const bigPicModal = new bootstrap.Modal(document.getElementById('fullScreenModal'));
+    bigPicModal.show();
+
+  }
+  function hideModal() {
+    const bigPicModal = new bootstrap.Modal(document.getElementById('fullScreenModal'));
+    bigPicModal.hide();
+  }
+</script>
 </body>
 </html>
