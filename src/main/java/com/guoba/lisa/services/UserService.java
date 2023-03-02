@@ -46,7 +46,7 @@ public class UserService {
         userRepository.save(dbUser);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void createStudentUser(CreateUser studentUser, Long institutionId) throws Exception {
         Long stuId = studentUser.getStuId();
         Optional<Student> stu = studentRepository.findById(stuId);
