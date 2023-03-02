@@ -15,7 +15,7 @@
             <div>
                 <p th:text="${studentWorkVo.name}"></p>
                 <p>
-                    <span th:text="${'Date of Birth ' + studentWorkVo.dateOfBirth}"></span>
+                    <span th:if="${studentWorkVo.dateOfBirth != null}" th:text="${'Date of Birth ' + studentWorkVo.dateOfBirth}"></span>
                     <span th:if="${studentWorkVo.age != null}" th:text="${', ' + studentWorkVo.age + ' years old'}"></span>
                 </p>
                 <p th:text="${'In classes: ' + studentWorkVo.classes}"></p>

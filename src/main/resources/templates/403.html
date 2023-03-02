@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head(~{::title}, ~{}, ~{})">
+    <title>404</title>
+</head>
+<body>
+<main>
+    <section class="container-md">
+        <h1>Access Denied</h1>
+        <div>
+            <p th:text="${errorMsg}"></p>
+            <a href="#" th:href="@{|${gobackurl}|}">Go Back</a>
+        </div>
+    </section>
+</main>
+<th:block th:replace="fragments :: common_scripts"></th:block>
+</body>
+</html>
