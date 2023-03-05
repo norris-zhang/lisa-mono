@@ -3,6 +3,7 @@ package com.guoba.lisa.controllers;
 import com.guoba.lisa.config.AuthUser;
 import com.guoba.lisa.datamodel.Institution;
 import com.guoba.lisa.datamodel.Parent;
+import com.guoba.lisa.datamodel.ParentStudent;
 import com.guoba.lisa.datamodel.Renew;
 import com.guoba.lisa.datamodel.Student;
 import com.guoba.lisa.dtos.StudentVo;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class StudentController {
@@ -152,5 +154,57 @@ public class StudentController {
             model.addAttribute("gobackurl", "/students");
             return "404";
         }
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping(path = "/student/{stuId}/update")
+    public String studentUpdate(@PathVariable Long stuId, Authentication auth, Model model) throws IllegalAccessException {
+        AuthUser authUser = (AuthUser) auth.getPrincipal();
+        Student student = studentService.getStudentById(stuId, authUser.getInstitutionId());
+        AddStudent stuModel = new AddStudent();
+        stuModel.setFirstName(student.getFirstName());
+        stuModel.setLastName(student.getLastName());
+        stuModel.setDob(student.getDateOfBirth());
+        stuModel.setEnrolmentDate(student.getEnrolledOn());
+        stuModel.setCredits(student.getCredits());
+        Set<ParentStudent> parents = student.getParents();
+        stuModel.setParentInfo(parents != null && parents.size() > 0);
+        if (parents != null && parents.size() > 0) {
+            Parent p = parents.stream().findFirst().map(ParentStudent::getParent).get();
+            stuModel.setParentFirstName(p.getFirstName());
+            stuModel.setParentLastName(p.getLastName());
+            stuModel.setContactNumber(p.getContactNumber());
+            model.addAttribute("parentId", p.getId());
+        }
+
+        model.addAttribute("model", stuModel);
+        model.addAttribute("stuId", stuId);
+        return "students/update";
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @PostMapping(path = "/student/{stuId}/update")
+    public String doStudentUpdate(@PathVariable Long stuId, @ModelAttribute AddStudent addStudent, Authentication auth, Model model)
+        throws IllegalAccessException {
+
+        AuthUser authUser = (AuthUser) auth.getPrincipal();
+        Student student = studentService.getStudentById(stuId, authUser.getInstitutionId());
+
+        student.setFirstName(addStudent.getFirstName());
+        student.setLastName(addStudent.getLastName());
+        student.setDateOfBirth(addStudent.getDob());
+        student.setEnrolledOn(addStudent.getEnrolmentDate());
+        student.setCredits(addStudent.getCredits());
+
+
+        Parent parentUpdate = new Parent();
+        parentUpdate.setId(addStudent.getParentId());
+        parentUpdate.setFirstName(addStudent.getParentFirstName());
+        parentUpdate.setLastName(addStudent.getParentLastName());
+        parentUpdate.setContactNumber(addStudent.getContactNumber());
+
+        studentService.updateStudent(student, addStudent.getParentInfo(), parentUpdate);
+
+        return "redirect:/students";
     }
 }

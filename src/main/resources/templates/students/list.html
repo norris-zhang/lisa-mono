@@ -43,9 +43,9 @@
                             <a href="#" class="btn btn-link" th:href="@{/student/topup(stuId=${s.id})}">Top-up</a>
                             <a href="#" class="btn btn-link" th:href="@{|/student/${s.id}|}">View Detail</a>
                             <a href="#" class="btn btn-link" th:href="@{|/student/roll/history/${s.id}|}">Roll History</a>
-                            <a href="#" class="btn btn-link" th:if="${s.userId == null}" th:href="@{/create-user(stuId=${s.id})}">Create User</a>
-                            <a href="#" class="btn btn-link">Update</a>
+                            <a href="#" class="btn btn-link" th:href="@{|/student/${s.id}/update|}">Update</a>
                             <a href="#" class="btn btn-link">Delete</a>
+                            <a href="#" class="btn btn-link" th:if="${s.userId == null}" th:href="@{/create-user(stuId=${s.id})}">Create User</a>
                             <a href="#" class="btn btn-danger" sec:authorize="hasAnyRole('ADMIN')" th:if="${s.userId != null}" title="Reset Password">RP</a>
                         </td>
                     </tr>

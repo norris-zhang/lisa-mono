@@ -10,7 +10,8 @@
     <section class="container-md">
         <h1>Add a Student</h1>
         <div th:if="${errorMsg}" th:text="${errorMsg}" style="color: red;">Error Message</div>
-        <form action="#" th:action="@{/students/add}" method="post" class="needs-validation" novalidate>
+        <form action="#" th:action="@{|/student/${stuId}/update|}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="parentId" th:value="${parentId}">
             <div class="mb-3">
                 <label for="firstName" class="form-label">First Name</label>
                 <input type="text" class="form-control" id="firstName" name="firstName" th:value="${model?.firstName}" maxlength="255" required placeholder="Example: John">
@@ -63,7 +64,7 @@
             </div>
             <hr>
             <div class="mb-3">
-                <input type="checkbox" name="parentInfo" id="parentcb" th:checked="${model?.parentInfo}" onchange="toggleParentInfo()">
+                <input type="checkbox" name="parentInfo" id="parentcb" th:checked="${model.parentInfo}" onchange="toggleParentInfo()">
                 <label for="parentcb" class="form-label">Parent/Guardian</label>
             </div>
 

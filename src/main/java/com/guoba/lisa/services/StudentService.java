@@ -227,4 +227,34 @@ public class StudentService {
             return suggestedUsername + (maxNum + 1);
         }
     }
+
+    @Transactional
+    public void updateStudent(Student student, Boolean parentInfo, Parent parentUpdate) {
+        parentInfo = parentInfo != null && parentInfo;
+        Set<ParentStudent> parents = student.getParents();
+        if (parents != null && parents.size() > 0 && !parentInfo) {
+            // delete parent
+            parents.forEach(ps -> {
+                psRepository.delete(ps);
+                parentRepository.delete(ps.getParent());
+            });
+        } else if ((parents == null || parents.size() == 0) && parentInfo) {
+            // add new parent
+            parentUpdate.setId(null);
+            parentUpdate.setInstitution(student.getInstitution());
+            parentRepository.save(parentUpdate);
+            ParentStudent ps = new ParentStudent();
+            ps.setStudent(student);
+            ps.setParent(parentUpdate);
+            psRepository.save(ps);
+        } else if (parents != null && parents.size() > 0 && parentInfo) {
+            // update existing parent
+            Parent parent = parents.stream().map(ParentStudent::getParent).filter(p -> p.getId().equals(parentUpdate.getId())).findAny().orElseThrow();
+            parent.setFirstName(parentUpdate.getFirstName());
+            parent.setLastName(parentUpdate.getLastName());
+            parent.setContactNumber(parentUpdate.getContactNumber());
+            parentRepository.save(parent);
+        }
+        studentRepository.save(student);
+    }
 }

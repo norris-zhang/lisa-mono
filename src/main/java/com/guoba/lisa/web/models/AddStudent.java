@@ -13,6 +13,7 @@ public class AddStudent {
     private Integer credits;
 
     private Boolean parentInfo;
+    private Long parentId;
     private String parentFirstName;
     private String parentLastName;
     private String contactNumber;
