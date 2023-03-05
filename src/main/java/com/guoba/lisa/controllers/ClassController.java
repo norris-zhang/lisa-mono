@@ -107,9 +107,18 @@ public class ClassController {
         model.addAttribute("classId", classId);
 
         List<Student> candidateStudents = studentService.findStudentsOutOfClass(classId, authUser.getInstitutionId());
-        List<StudentMultipleSelectVo> voList = new ArrayList<>();
-        candidateStudents.forEach(s -> voList.add(studentToMultipleSelectVo(s)));
-        model.addAttribute("candidateStudents", voList);
+        List<StudentMultipleSelectVo> newStuVoList = new ArrayList<>();
+        List<StudentMultipleSelectVo> oldStuVoList = new ArrayList<>();
+        candidateStudents.forEach(s -> {
+            StudentMultipleSelectVo vo = studentToMultipleSelectVo(s);
+            if (s.getClasses().size() == 0) {
+                newStuVoList.add(vo);
+            } else {
+                oldStuVoList.add(vo);
+            }
+        });
+        model.addAttribute("newCandidateStudents", newStuVoList);
+        model.addAttribute("oldCandidateStudents", oldStuVoList);
 
         return "classes/add-student";
     }
@@ -134,7 +143,9 @@ public class ClassController {
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping(path = "/lclass/addstu")
     public String createClassStudent(Long classId, Long[] studentIds) {
-        classService.addStudents(classId, studentIds);
+        if (studentIds != null && studentIds.length > 0) {
+            classService.addStudents(classId, studentIds);
+        }
         return "redirect:/lclass/students?classId=" + classId;
     }
 

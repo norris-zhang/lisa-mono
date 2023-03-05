@@ -17,9 +17,21 @@
         <form action="#" th:action="@{/lclass/addstu}" method="post" class="needs-validation" novalidate>
             <input type="hidden" name="classId" th:value="${classId}">
             <div class="mb-3">
-                <label for="studentIds" class="form-label">Select students to add to class</label>
-                <select name="studentIds" id="studentIds" class="form-select" required multiple>
-                    <option value="1" th:each="stu : ${candidateStudents}" th:value="${stu.id}" th:text="${stu.desc}">1</option>
+                <label for="newStudentIds" class="form-label">Select students to add to class</label>
+                <select name="studentIds" id="newStudentIds" class="form-select" multiple>
+                    <option value="1" th:each="stu : ${newCandidateStudents}" th:value="${stu.id}" th:text="${stu.desc}">1</option>
+                </select>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please select at least one student.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="oldStudentIds" class="form-label">Select more students to add to class</label>
+                <select name="studentIds" id="oldStudentIds" class="form-select" multiple>
+                    <option value="1" th:each="stu : ${oldCandidateStudents}" th:value="${stu.id}" th:text="${stu.desc}">1</option>
                 </select>
                 <div class="valid-feedback">
                     Looks good!
